@@ -1,0 +1,7 @@
+{
+  "server_url": "http://127.0.0.1:5000",
+  "backup_server_url": "http://127.0.0.1:5000",
+  "updated_at": "2026-08-23T12:00:00.000Z",
+  "description": "雨课堂自动签到与AI答题分布式同步服务器配置模板",
+  "version": "1.0.0"
+}

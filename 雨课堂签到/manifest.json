@@ -1,0 +1,97 @@
+{
+    "name" : "雨课堂签到",
+    "appid" : "__UNI__D4DEEB9",
+    "description" : "人生漫长，越是向外求索，越会发觉形单影只才是寻常光景",
+    "versionName" : "2.6.1",
+    "versionCode" : 261,
+    "transformPx" : false,
+    /* 5+App特有相关 */
+    "app-plus" : {
+        "usingComponents" : true,
+        "nvueStyleCompiler" : "uni-app",
+        "compilerVersion" : 3,
+        "splashscreen" : {
+            "alwaysShowBeforeRender" : true,
+            "waiting" : true,
+            "autoclose" : true,
+            "delay" : 0
+        },
+        /* 核心扫码引擎配置模块 */
+        "modules" : {
+            "Barcode" : {
+                "engine" : "mPaaS"
+            }
+        },
+        /* 应用发布信息 */
+        "distribute" : {
+            /* android打包配置 */
+            "android" : {
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CAMERA\"/>",
+                    "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+                    "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+                ]
+            },
+            /* ios打包配置 */
+            "ios" : {
+                "dSYMs" : false
+            },
+            /* SDK配置 */
+            "sdkConfigs" : {},
+            "icons" : {
+                "android" : {
+                    "hdpi" : "D:/app/AppIcons/android/mipmap-hdpi/666.png",
+                    "xhdpi" : "D:/app/AppIcons/android/mipmap-mdpi/666.png",
+                    "xxhdpi" : "D:/app/AppIcons/android/mipmap-xhdpi/666.png",
+                    "xxxhdpi" : "D:/app/AppIcons/android/mipmap-xxhdpi/666.png"
+                }
+            },
+            "splashscreen" : {
+                "androidStyle" : "default",
+                "android" : {
+                    "xhdpi" : "D:/app/ImageSets/android/drawable-xhdpi/Gemini_Generated_Image_gpkzsogpkzsogpkz.png",
+                    "hdpi" : "D:/app/ImageSets/android/drawable-hdpi/Gemini_Generated_Image_gpkzsogpkzsogpkz.png",
+                    "xxhdpi" : "D:/app/ImageSets/android/drawable-xxhdpi/Gemini_Generated_Image_gpkzsogpkzsogpkz.png"
+                },
+                "useOriginalMsgbox" : true
+            }
+        }
+    },
+    /* 快应用特有相关 */
+    "quickapp" : {},
+    /* 小程序特有相关 */
+    "mp-weixin" : {
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : false
+        },
+        "usingComponents" : true
+    },
+    "mp-alipay" : {
+        "usingComponents" : true
+    },
+    "mp-baidu" : {
+        "usingComponents" : true
+    },
+    "mp-toutiao" : {
+        "usingComponents" : true
+    },
+    "uniStatistics" : {
+        "enable" : false
+    },
+    "vueVersion" : "3",
+    "locale" : "zh-Hans",
+    "fallbackLocale" : "zh-Hans"
+}

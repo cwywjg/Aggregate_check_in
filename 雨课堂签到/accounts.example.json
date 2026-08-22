@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1000000000001,
+    "remark": "终端01 (主力)",
+    "name": "示例学员A",
+    "school": "示例大学",
+    "phone": "13800138001",
+    "uid": 10000001,
+    "cookie": "sessionid=mock_session_id_sample_01; sid=mock_sid_hash_01; django_language=zh-cn;",
+    "device": {
+      "brand": "vivo X90 Pro",
+      "uuid": "",
+      "buildnumber": "1610",
+      "x-client": "app",
+      "xtua": "client=app&tag=1.3.3&platform=Android",
+      "systemversion": "11",
+      "incremental": "58312126",
+      "version": "1.3.3",
+      "isphysicaldevice": "true",
+      "xtbz": "ykt",
+      "user-agent": "Android"
+    },
+    "expired": false
+  },
+  {
+    "id": 1000000000002,
+    "remark": "终端02 (挂机)",
+    "name": "示例学员B",
+    "school": "示例大学",
+    "phone": "13800138002",
+    "uid": 10000002,
+    "cookie": "sessionid=mock_session_id_sample_02; sid=mock_sid_hash_02; django_language=zh-cn;",
+    "device": {
+      "brand": "HUAWEI Mate 60 Pro",
+      "buildnumber": "1610",
+      "incremental": "14138502",
+      "isphysicaldevice": "true",
+      "systemversion": "14",
+      "user-agent": "Android",
+      "uuid": "",
+      "version": "1.3.3",
+      "x-client": "app",
+      "xtbz": "ykt",
+      "xtua": "client=app&tag=1.3.3&platform=Android"
+    },
+    "expired": false
+  }
+]

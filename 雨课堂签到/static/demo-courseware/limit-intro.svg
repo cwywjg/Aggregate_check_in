@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101E40"/><stop offset="1" stop-color="#1B4D88"/></linearGradient>
+    <linearGradient id="curve" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#FFB44A"/><stop offset="1" stop-color="#FF7055"/></linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity=".12" stroke="#B8D9FF" stroke-width="1"><path d="M0 160H1600M0 320H1600M0 480H1600M0 640H1600M220 0V900M440 0V900M660 0V900M880 0V900M1100 0V900M1320 0V900M1540 0V900"/></g>
+  <text x="118" y="145" fill="#A7D3FF" font-family="Arial, sans-serif" font-size="28" letter-spacing="6">HIGHER MATHEMATICS · 01</text>
+  <text x="118" y="265" fill="#FFF" font-family="Arial, sans-serif" font-size="78" font-weight="700">极限与连续</text>
+  <text x="122" y="325" fill="#C9DCF5" font-family="Arial, sans-serif" font-size="28">Limits &amp; Continuity</text>
+  <g transform="translate(850 160)">
+    <path d="M70 525H600M335 45V600" stroke="#D6E9FF" stroke-width="4" opacity=".8"/>
+    <path d="M90 510 C160 500 205 457 248 360 C285 278 304 195 333 195 C365 195 393 345 430 430 C470 522 522 535 590 540" fill="none" stroke="url(#curve)" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="333" cy="195" r="17" fill="#101E40" stroke="#FFB44A" stroke-width="8"/>
+    <path d="M333 195 L455 103" stroke="#A7D3FF" stroke-width="3" stroke-dasharray="8 9"/>
+    <text x="470" y="100" fill="#FFF" font-family="Arial, sans-serif" font-size="27">x → a</text>
+    <text x="350" y="75" fill="#C9DCF5" font-family="Arial, sans-serif" font-size="24">f(x)</text>
+  </g>
+  <rect x="118" y="700" width="580" height="92" rx="20" fill="#FFFFFF" fill-opacity=".12"/>
+  <text x="150" y="757" fill="#FFF" font-family="Arial, sans-serif" font-size="28">当 x 趋近于 a 时，函数值趋近于什么？</text>
+  <text x="1370" y="810" fill="#A7D3FF" font-family="Arial, sans-serif" font-size="25">01 / 03</text>
+</svg>

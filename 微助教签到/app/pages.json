@@ -1,0 +1,116 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "连接服务器"
+			}
+		},
+		{
+			"path": "pages/accounts/add",
+			"style": {
+				"navigationBarTitleText": "添加账号"
+			}
+		},
+		{
+			"path": "pages/accounts/list",
+			"style": {
+				"navigationBarTitleText": "账号列表"
+			}
+		},
+		{
+			"path": "pages/signin/index",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/signin/result",
+			"style": {
+				"navigationBarTitleText": "签到结果"
+			}
+		},
+		{
+			"path": "pages/quiz/courses",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/quiz/questions",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/quiz/detail",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/settings/index",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "微助教签到助手",
+		"navigationBarBackgroundColor": "#F8F9FA",
+		"backgroundColor": "#F8F9FA",
+		"app-plus": {
+			"titleNView": {
+				"titleColor": "#191C1D",
+				"backgroundColor": "#F8F9FA"
+			}
+		}
+	},
+	"tabBar": {
+		"color": "#717786",
+		"selectedColor": "#0058bc",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "white",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tab/home.png",
+				"selectedIconPath": "static/tab/home_active.png"
+			},
+			{
+				"pagePath": "pages/quiz/courses",
+				"text": "答题",
+				"iconPath": "static/tab/quiz.png",
+				"selectedIconPath": "static/tab/quiz_active.png"
+			}
+		]
+	}
+}
+
+

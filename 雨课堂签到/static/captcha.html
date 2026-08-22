@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src https: data: blob:; connect-src https: wss:; frame-src https:; worker-src 'self' https: blob:;">
+    <meta name="referrer" content="no-referrer">
+    <title>安全验证</title>
+    <!-- 引入 UniJSBridge 用来往 App 回传参数 -->
+    <script defer type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
+    <!-- 腾讯云验证码 JS -->
+    <script defer src="https://turing.captcha.qcloud.com/TCaptcha.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;}
+        .loading-text { color: #666; font-size: 16px; font-weight: bold; font-family: sans-serif; margin-bottom: 20px;}
+        .reload-btn { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 20px; font-size: 15px;}
+    </style>
+</head>
+<body>
+    <div class="loading-text" id="status">正在加载滑动验证...</div>
+    <button class="reload-btn" onclick="initCaptcha()" id="btn" style="display: none;">点我重新加载</button>
+
+    <script>
+        // 与 APP 抓包一致的应用 ID
+        var CAPTCHA_AID = '2091064951';
+        var captchaRunning = false;
+        var pendingMessage = null;
+        var hasSentSuccess = false;
+        var retryTimer = null;
+
+        function postToApp(payload) {
+            if (hasSentSuccess && payload && payload.type === 'success') {
+                return true;
+            }
+            try {
+                if (window.uni && typeof window.uni.postMessage === 'function') {
+                    window.uni.postMessage({ data: payload });
+                    if (payload && payload.type === 'success') {
+                        hasSentSuccess = true;
+                        pendingMessage = null;
+                        if (retryTimer) {
+                            clearInterval(retryTimer);
+                            retryTimer = null;
+                        }
+                    }
+                    return true;
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        function initCaptcha() {
+            if (captchaRunning || hasSentSuccess) return;
+            document.getElementById('status').innerText = '正在调起验证码...';
+            document.getElementById('btn').style.display = 'none';
+
+            try {
+                if (typeof window.TencentCaptcha !== 'function') {
+                    throw new Error('验证码 SDK 尚未加载');
+                }
+                captchaRunning = true;
+                var captcha = new TencentCaptcha(
+                    CAPTCHA_AID,
+                    function(res) {
+                        captchaRunning = false;
+                        if (res.ret === 0) {
+                            // 验证成功！
+                            document.getElementById('status').innerText = '验证成功，正在返回...';
+                            document.getElementById('status').style.color = '#10b981';
+                            
+                            var successPayload = {
+                                type: 'success',
+                                ticket: res.ticket,
+                                randstr: res.randstr
+                            };
+
+                            if (!postToApp(successPayload)) {
+                                pendingMessage = successPayload;
+                                document.getElementById('status').innerText = '验证成功，正在等待通道...';
+                            }
+                        } else {
+                            // 验证失败或取消
+                            document.getElementById('status').innerText = '验证已取消或失败';
+                            document.getElementById('btn').style.display = 'block';
+                        }
+                    },
+                    { needFeedBack: true, lang: 'zh-cn' }
+                );
+                captcha.show();
+            } catch (e) {
+                captchaRunning = false;
+                document.getElementById('status').innerText = '加载验证码出错: ' + e.message;
+                document.getElementById('btn').style.display = 'block';
+            }
+        }
+
+        // 当 uni bridge 挂载完成后执行调起
+        document.addEventListener('UniAppJSBridgeReady', function() {
+            if (pendingMessage) postToApp(pendingMessage);
+            setTimeout(initCaptcha, 400);
+        });
+
+        // 兜底页面加载完成
+        window.addEventListener('load', function() {
+            setTimeout(initCaptcha, 600);
+        });
+
+        // 定时轮询补投（只在尚未成功发送时执行，且一旦发送成功立即停止）
+        retryTimer = setInterval(function() {
+            if (pendingMessage && !hasSentSuccess) {
+                postToApp(pendingMessage);
+            }
+        }, 500);
+    </script>
+</body>
+</html>

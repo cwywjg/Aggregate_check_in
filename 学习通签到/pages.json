@@ -1,0 +1,20 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "学习通签到助手",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "学习通签到助手",
+		"navigationBarBackgroundColor": "#F2F2F7",
+		"backgroundColor": "#F2F2F7"
+	}
+}

@@ -1,0 +1,34 @@
+# Runtime secrets and user data
+.env
+ykt.env
+.admin_key
+accounts.json
+accounts.json.*
+keys.json
+keys.json.*
+ai_history.json
+ai_history.json.*
+ai_health.json
+ai_health.json.*
+problem_states.json
+problem_states.json.*
+ai_engine.log
+data/
+logs/
+venv/
+.test-venv/
+tests/nvidia_benchmark_output/
+tests/siliconflow_benchmark_output/
+
+# Python / editor output
+__pycache__/
+*.py[cod]
+.idea/
+
+# HBuilder generated packages
+unpackage/
+
+# Captures and local reverse-engineering output
+*.har
+blutter/
+flutter_libs/

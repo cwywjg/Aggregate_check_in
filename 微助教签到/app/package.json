@@ -1,0 +1,9 @@
+{
+	"name": "tjcu-helper",
+	"version": "1.0.0",
+	"description": "天商便捷助手 - 微助教签到&答题",
+	"main": "main.js",
+	"scripts": {
+		"dev": "uni"
+	}
+}

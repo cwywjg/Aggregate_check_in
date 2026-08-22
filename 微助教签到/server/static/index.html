@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>天商便捷助手 - 服务器账号管理中心</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <style>
+        :root {
+            --primary: #0A84FF;
+            --primary-hover: #0070E0;
+            --primary-light: #EBF5FF;
+            --success: #30D158;
+            --success-bg: #E8F9ED;
+            --warning: #FF9F0A;
+            --warning-bg: #FFF6E5;
+            --danger: #FF453A;
+            --danger-hover: #E0352A;
+            --danger-bg: #FFEBEA;
+            --bg: #F4F6F9;
+            --surface: #FFFFFF;
+            --text-main: #1D1D1F;
+            --text-sub: #86868B;
+            --border: rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 顶部导航 */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), #5856D6);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #F0F0F5;
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #FFFFFF;
+        }
+
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+        }
+
+        /* 主体内容 */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* 看板指标 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .stat-blue { background: var(--primary-light); color: var(--primary); }
+        .stat-green { background: var(--success-bg); color: var(--success); }
+        .stat-purple { background: rgba(88, 86, 214, 0.1); color: #5856D6; }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        /* 账号管理标题区 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* 账号卡片网格 */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .account-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .account-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: rgba(10, 132, 255, 0.3);
+        }
+
+        .account-card.is-master {
+            border: 1.5px solid var(--primary);
+            background: linear-gradient(180deg, rgba(10, 132, 255, 0.03) 0%, #FFFFFF 100%);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 54px;
+            height: 54px;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #E5E5EA;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+        }
+
+        .status-online { background: var(--success); }
+        .status-offline { background: var(--danger); }
+
+        .acc-primary-info {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .acc-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .acc-name {
+            font-size: 16px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .badge-master {
+            background: linear-gradient(135deg, #0A84FF, #5856D6);
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .openid-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-sub);
+            background: #F4F4F6;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            cursor: pointer;
+            width: fit-content;
+            transition: background 0.15s;
+        }
+
+        .openid-tag:hover {
+            background: #E5E5EA;
+            color: var(--text-main);
+        }
+
+        .card-body {
+            background: #F9F9FB;
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            color: var(--text-sub);
+        }
+
+        .info-val {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill-status {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pill-alive { background: var(--success-bg); color: var(--success); }
+        .pill-expired { background: var(--danger-bg); color: var(--danger); }
+        .pill-warn { background: var(--warning-bg); color: var(--warning); }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 4px;
+        }
+
+        /* 模态弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 440px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transform: scale(0.92);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: #F2F2F7;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--text-sub);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #E5E5EA;
+            color: var(--text-main);
+        }
+
+        /* 扫码区域 */
+        .qr-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 16px;
+            background: #F9F9FB;
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border);
+            min-height: 240px;
+            position: relative;
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            border-radius: var(--radius-sm);
+            background: #FFFFFF;
+            padding: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-status-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        .qr-subtext {
+            font-size: 12px;
+            color: var(--text-sub);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(10, 132, 255, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 确认对话框 */
+        .confirm-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--danger-bg);
+            color: var(--danger);
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .confirm-desc {
+            font-size: 14px;
+            color: var(--text-sub);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .confirm-highlight {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .modal-btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .modal-btn-row .btn {
+            flex: 1;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 60px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .empty-emoji {
+            font-size: 48px;
+        }
+
+        /* Toast 提示 */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(29, 29, 31, 0.9);
+            color: #FFFFFF;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 设置弹窗表单 */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #F9F9FB;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            background: #FFFFFF;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+        }
+
+        @media (max-width: 640px) {
+            .accounts-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-container {
+                padding: 12px 16px;
+            }
+            main {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="brand">
+                <div class="brand-logo">🎓</div>
+                <div>
+                    <div class="brand-title">天商便捷助手</div>
+                    <div class="brand-sub">服务器账号管理控制台</div>
+                </div>
+            </a>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="openKeyModal()" title="设置 API Key">
+                    <span>🔑 鉴权设置</span>
+                </button>
+                <button class="btn btn-primary" onclick="openQRModal()">
+                    <span>➕ 扫码添加账号</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体区域 -->
+    <main>
+        <!-- 统计指标 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon-wrap stat-blue">👥</div>
+                <div class="stat-info">
+                    <span class="stat-label">服务器已存账号</span>
+                    <span class="stat-value" id="stat-total">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap stat-green">⚡</div>
+                <div class="stat-info">
+                    <span class="stat-label">正常存活账号</span>
+                    <span class="stat-value" id="stat-alive">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap stat-purple">🛡️</div>
+                <div class="stat-info">
+                    <span class="stat-label">后台保活引擎</span>
+                    <span class="stat-value" id="stat-engine">运行中</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账号列表标题区 -->
+        <div class="section-header">
+            <div class="section-title">
+                <span>微信与微助教账号列表</span>
+                <span style="font-size: 14px; font-weight: 500; color: var(--text-sub);" id="acc-count-badge"></span>
+            </div>
+            <div class="section-actions">
+                <button class="btn btn-secondary" onclick="triggerProbe()" id="btn-probe">
+                    <span>⚡ 全量保活实测</span>
+                </button>
+                <button class="btn btn-secondary" onclick="loadAccounts(true)" id="btn-refresh">
+                    <span>🔄 刷新列表</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 账号卡片网格 -->
+        <div class="accounts-grid" id="accounts-container">
+            <!-- 动态注入账号卡片 -->
+        </div>
+    </main>
+
+    <!-- 扫码添加账号弹窗 -->
+    <div class="modal-overlay" id="qr-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">微信扫码添加账号</div>
+                <button class="modal-close" onclick="closeQRModal()">✕</button>
+            </div>
+            <div class="qr-box">
+                <div id="qr-loading" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                    <div class="spinner"></div>
+                    <span class="qr-subtext">正在向微信协议引擎申请二维码...</span>
+                </div>
+                <img id="qr-img" class="qr-image" style="display: none;" src="" alt="登录二维码">
+                <div class="qr-status-text" id="qr-status">准备生成...</div>
+                <div class="qr-subtext">使用微信「扫一扫」并点击授权登录</div>
+            </div>
+            <div class="modal-btn-row">
+                <button class="btn btn-secondary" onclick="generateQR()">🔄 刷新二维码</button>
+                <button class="btn btn-secondary" onclick="closeQRModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal-card">
+            <div class="confirm-icon">🗑️</div>
+            <div class="modal-title" style="text-align: center;">确认彻底删除账号？</div>
+            <div class="confirm-desc">
+                即将从服务器及底层微信协议引擎彻底删除账号：<br>
+                <span class="confirm-highlight" id="del-target-name">未知账号</span><br>
+                <span style="font-size: 12px; font-family: monospace; color: var(--text-sub);" id="del-target-ref"></span>
+            </div>
+            <div style="background: var(--danger-bg); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; color: var(--danger); line-height: 1.4;">
+                ⚠️ 删除后，该账号的所有微助教会话凭证与本地缓存将被永久物理清理。
+            </div>
+            <div class="modal-btn-row">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" id="btn-confirm-delete" onclick="executeDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key 配置弹窗 -->
+    <div class="modal-overlay" id="key-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">API Key 鉴权设置</div>
+                <button class="modal-close" onclick="closeKeyModal()">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">后端访问密钥 (X-API-Key)</label>
+                <input type="text" class="form-input" id="input-api-key" placeholder="输入服务器 API_KEY">
+                <span style="font-size: 12px; color: var(--text-sub);">默认密钥为 tjcu-helper-2026，配置将安全保存在浏览器本地。</span>
+            </div>
+            <div class="modal-btn-row">
+                <button class="btn btn-secondary" onclick="closeKeyModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveApiKey()">保存并连接</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局 Toast 提示 -->
+    <div id="toast"></div>
+
+    <script>
+        // 全局状态
+        let API_KEY = localStorage.getItem('TJCU_API_KEY') || 'tjcu-helper-2026';
+        let currentAccounts = [];
+        let qrSessionId = null;
+        let qrPollTimer = null;
+        let deleteTargetRef = null;
+
+        // 请求封装
+        async function apiRequest(path, options = {}) {
+            const headers = {
+                'X-API-Key': API_KEY,
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+            };
+            const response = await fetch(path, { ...options, headers });
+            if (response.status === 403) {
+                showToast('❌ API Key 无效或未授权，请点击右上角配置密钥');
+                openKeyModal();
+                throw new Error('403 Forbidden');
+            }
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(errText || `HTTP ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        // Toast 消息
+        function showToast(msg, duration = 2400) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, duration);
+        }
+
+        // 复制文本
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 已复制 OpenID 到剪贴板');
+            }).catch(() => {
+                showToast('OpenID: ' + text);
+            });
+        }
+
+        // 格式化时间
+        function formatTime(isoStr) {
+            if (!isoStr) return '暂无记录';
+            try {
+                const d = new Date(isoStr);
+                if (isNaN(d.getTime())) return isoStr;
+                return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            } catch (e) {
+                return isoStr;
+            }
+        }
+
+        // 1. 加载账号列表
+        async function loadAccounts(showTip = false) {
+            const btnRefresh = document.getElementById('btn-refresh');
+            if (btnRefresh) btnRefresh.innerText = '正在刷新...';
+            try {
+                const data = await apiRequest('/api/accounts/sync');
+                currentAccounts = data.accounts || [];
+                renderAccounts();
+                if (showTip) showToast('🎉 账号列表已同步更新');
+            } catch (err) {
+                console.error(err);
+                if (showTip) showToast('⚠️ 获取账号失败: ' + err.message);
+            } finally {
+                if (btnRefresh) btnRefresh.innerText = '🔄 刷新列表';
+            }
+        }
+
+        // 2. 渲染卡片
+        function renderAccounts() {
+            const container = document.getElementById('accounts-container');
+            const totalEl = document.getElementById('stat-total');
+            const aliveEl = document.getElementById('stat-alive');
+            const badgeEl = document.getElementById('acc-count-badge');
+
+            totalEl.innerText = currentAccounts.length;
+            const aliveCount = currentAccounts.filter(a => a.is_alive).length;
+            aliveEl.innerText = aliveCount;
+            badgeEl.innerText = `(共 ${currentAccounts.length} 人，${aliveCount} 人在线)`;
+
+            if (currentAccounts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-emoji">👥</div>
+                        <div style="font-size: 18px; font-weight: 700;">服务器暂未绑定任何微信账号</div>
+                        <div style="font-size: 14px; color: var(--text-sub); max-width: 320px;">
+                            点击右上角「➕ 扫码添加账号」即可使用微信扫一扫绑定至服务器
+                        </div>
+                        <button class="btn btn-primary" onclick="openQRModal()" style="margin-top: 10px;">
+                            ➕ 立即扫码添加
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = currentAccounts.map(acc => {
+                const isMaster = acc.is_master;
+                const isAlive = acc.is_alive;
+                const avatarSrc = acc.avatar_url || '/favicon.ico';
+                const nickname = acc.nickname || '未知用户';
+                const ref = acc.ref || '';
+                const shortRef = ref.length > 18 ? `${ref.substring(0, 8)}...${ref.substring(ref.length - 6)}` : ref;
+                const lastKeepalive = formatTime(acc.last_keepalive_at);
+                const probeStatus = acc.last_probe_status === 'alive' ? '🟢 正常' : (acc.last_probe_status === 'failed' ? '🔴 异常' : '⚪ 未测');
+
+                return `
+                    <div class="account-card ${isMaster ? 'is-master' : ''}">
+                        <div class="card-header">
+                            <div class="avatar-wrap">
+                                <img class="avatar" src="${avatarSrc}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 100 100\\'><text y=\\'.9em\\' font-size=\\'90\\'>👤</text></svg>'">
+                                <div class="status-dot ${isAlive ? 'status-online' : 'status-offline'}" title="${isAlive ? '微信协议在线' : '微信登录失效'}"></div>
+                            </div>
+                            <div class="acc-primary-info">
+                                <div class="acc-name-row">
+                                    <span class="acc-name" title="${nickname}">${nickname}</span>
+                                    ${isMaster ? '<span class="badge-master">主账号</span>' : ''}
+                                </div>
+                                <div class="openid-tag" onclick="copyText('${ref}')" title="点击复制完整 OpenID">
+                                    <span>${shortRef}</span>
+                                    <span>📋</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="info-row">
+                                <span class="info-label">微信底层协议:</span>
+                                <span class="info-val">
+                                    <span class="pill-status ${isAlive ? 'pill-alive' : 'pill-expired'}">${isAlive ? '✓ 在线活跃' : '✗ 凭证失效'}</span>
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">微助教会话状态:</span>
+                                <span class="info-val">
+                                    <span class="pill-status ${acc.needs_rescan ? 'pill-expired' : 'pill-alive'}">${acc.needs_rescan ? '需重新扫码' : '有效就绪'}</span>
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">小程序 Code 实测:</span>
+                                <span class="info-val">${probeStatus}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">最近保活巡检:</span>
+                                <span class="info-val" style="color: var(--text-sub); font-size: 12px;">${lastKeepalive}</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div>
+                                ${!isMaster ? `
+                                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="setMasterAccount('${ref}')">
+                                        ⭐ 设为主账号
+                                    </button>
+                                ` : '<span style="font-size: 12px; font-weight: 600; color: var(--primary);">⭐ 默认主答题账号</span>'}
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-danger" style="padding: 6px 14px; font-size: 13px;" onclick="openDeleteModal('${ref}', '${encodeURIComponent(nickname)}')">
+                                    🗑️ 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 3. 扫码登录逻辑
+        function openQRModal() {
+            document.getElementById('qr-modal').classList.add('active');
+            generateQR();
+        }
+
+        function closeQRModal() {
+            document.getElementById('qr-modal').classList.remove('active');
+            if (qrPollTimer) {
+                clearInterval(qrPollTimer);
+                qrPollTimer = null;
+            }
+        }
+
+        async function generateQR() {
+            if (qrPollTimer) clearInterval(qrPollTimer);
+            const qrLoading = document.getElementById('qr-loading');
+            const qrImg = document.getElementById('qr-img');
+            const qrStatus = document.getElementById('qr-status');
+
+            qrLoading.style.display = 'flex';
+            qrImg.style.display = 'none';
+            qrStatus.innerText = '正在生成二维码...';
+
+            try {
+                const res = await apiRequest('/api/accounts/qr', { method: 'POST' });
+                qrSessionId = res.session_id;
+                qrImg.src = res.image_base64;
+                qrLoading.style.display = 'none';
+                qrImg.style.display = 'block';
+                qrStatus.innerText = '⏳ 等待微信扫码...';
+
+                // 开始轮询
+                startPolling(qrSessionId);
+            } catch (err) {
+                qrLoading.style.display = 'none';
+                qrStatus.innerText = '⚠️ 生成失败: ' + err.message;
+            }
+        }
+
+        function startPolling(sessionId) {
+            qrPollTimer = setInterval(async () => {
+                try {
+                    const res = await apiRequest(`/api/accounts/qr/${sessionId}/poll`);
+                    const status = res.status;
+                    const statusEl = document.getElementById('qr-status');
+
+                    if (status === 'waiting') {
+                        statusEl.innerText = '⏳ 等待手机微信扫码...';
+                    } else if (status === 'scanned') {
+                        statusEl.innerText = '📱 已扫码，请在手机上点击【允许登录】';
+                        statusEl.style.color = '#FF9F0A';
+                    } else if (status === 'confirmed') {
+                        clearInterval(qrPollTimer);
+                        statusEl.innerText = '⚡ 扫码已确认，正在绑定入库...';
+                        statusEl.style.color = '#30D158';
+                        await confirmLogin(sessionId);
+                    } else if (status === 'expired') {
+                        clearInterval(qrPollTimer);
+                        statusEl.innerText = '❌ 二维码已过期，请点击刷新';
+                        statusEl.style.color = '#FF453A';
+                    }
+                } catch (e) {
+                    console.warn('Poll error:', e);
+                }
+            }, 1500);
+        }
+
+        async function confirmLogin(sessionId) {
+            try {
+                const res = await apiRequest(`/api/accounts/qr/${sessionId}/confirm`, { method: 'POST' });
+                if (res.success) {
+                    showToast(`🎉 欢迎「${res.nickname || '新账号'}」加入服务器！`);
+                    closeQRModal();
+                    loadAccounts(false);
+                } else {
+                    document.getElementById('qr-status').innerText = '❌ ' + (res.message || '确认失败');
+                }
+            } catch (e) {
+                document.getElementById('qr-status').innerText = '❌ 确认异常: ' + e.message;
+            }
+        }
+
+        // 4. 删除账号逻辑
+        function openDeleteModal(ref, encNickname) {
+            deleteTargetRef = ref;
+            const name = decodeURIComponent(encNickname || '该账号');
+            document.getElementById('del-target-name').innerText = name;
+            document.getElementById('del-target-ref').innerText = ref;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            deleteTargetRef = null;
+            document.getElementById('delete-modal').classList.remove('active');
+        }
+
+        async function executeDelete() {
+            if (!deleteTargetRef) return;
+            const btn = document.getElementById('btn-confirm-delete');
+            btn.innerText = '正在删除...';
+            btn.disabled = true;
+            try {
+                await apiRequest(`/api/accounts/${deleteTargetRef}`, { method: 'DELETE' });
+                showToast('🗑️ 账号已成功从服务器删除！');
+                closeDeleteModal();
+                loadAccounts(false);
+            } catch (err) {
+                showToast('❌ 删除失败: ' + err.message);
+            } finally {
+                btn.innerText = '确认删除';
+                btn.disabled = false;
+            }
+        }
+
+        // 5. 设为主账号
+        async function setMasterAccount(ref) {
+            try {
+                await apiRequest(`/api/accounts/${ref}/master`, { method: 'PUT' });
+                showToast('⭐ 已设为主答题账号');
+                loadAccounts(false);
+            } catch (e) {
+                showToast('❌ 操作失败: ' + e.message);
+            }
+        }
+
+        // 6. 全量保活实测
+        async function triggerProbe() {
+            const btn = document.getElementById('btn-probe');
+            btn.innerText = '⚡ 正在实测...';
+            btn.disabled = true;
+            try {
+                const res = await apiRequest('/api/accounts/probe', { method: 'POST' });
+                const snap = res.snapshot || {};
+                showToast(`✅ 实测完成: ${snap.success || 0} 个正常，${snap.failed || 0} 个异常`);
+                loadAccounts(false);
+            } catch (e) {
+                showToast('❌ 实测异常: ' + e.message);
+            } finally {
+                btn.innerText = '⚡ 全量保活实测';
+                btn.disabled = false;
+            }
+        }
+
+        // 7. API Key 模态框
+        function openKeyModal() {
+            document.getElementById('input-api-key').value = API_KEY;
+            document.getElementById('key-modal').classList.add('active');
+        }
+
+        function closeKeyModal() {
+            document.getElementById('key-modal').classList.remove('active');
+        }
+
+        function saveApiKey() {
+            const val = document.getElementById('input-api-key').value.trim();
+            if (!val) {
+                showToast('API Key 不能为空');
+                return;
+            }
+            API_KEY = val;
+            localStorage.setItem('TJCU_API_KEY', API_KEY);
+            showToast('🔑 密钥已保存，正在重新加载数据...');
+            closeKeyModal();
+            loadAccounts(true);
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAccounts(false);
+            // 每 15 秒静默轮询一次服务器数据
+            setInterval(() => loadAccounts(false), 15000);
+        });
+    </script>
+</body>
+</html>

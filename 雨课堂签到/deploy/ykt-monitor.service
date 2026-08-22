@@ -1,0 +1,26 @@
+[Unit]
+Description=Yuketang Account Validity Monitor
+Wants=network-online.target
+After=network-online.target ykt-api.service
+
+[Service]
+Type=simple
+User=ykt
+Group=ykt
+WorkingDirectory=/opt/ykt
+EnvironmentFile=/etc/ykt/ykt.env
+ExecStart=/opt/ykt/venv/bin/python /opt/ykt/ykt_monitor.py
+Restart=always
+RestartSec=10
+TimeoutStopSec=20
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+StateDirectory=ykt
+ReadWritePaths=/var/lib/ykt
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

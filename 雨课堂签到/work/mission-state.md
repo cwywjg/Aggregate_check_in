@@ -1,0 +1,39 @@
+# Final Chain Audit Mission
+
+- Primary objective: verify the current app/server can be deployed and used end to end without known code omissions.
+- Current subgoal: final regression, clean deployment packaging and delivery.
+- Scope: account onboarding, captcha/SMS, sync, sign-in, lesson binding, WebSocket, slides, manual/AI answering, batch submission, lesson cleanup, monitoring, PM2 deployment.
+- Success criteria: every intended function has an implementation path, state cleanup and error path; automated tests pass; discovered code defects are fixed.
+- Known facts:
+  - Frontend source is under `pages/`.
+  - Server processes are `api_server.py`, `ykt_ws_engine.py`, `ykt_monitor.py`.
+  - PM2 starts all three processes from `ecosystem.config.cjs`.
+  - Captcha now uses a dedicated page and a WebView bridge.
+- Evidence collected:
+  - Current source and three user-supplied analysis documents exist.
+  - Existing Python and Node test suites are present.
+  - Reverse evidence fixes the submission contract: `lessonToken` header, numeric `problemId`, problem types 0-4, subjective `{content,pics,videos}`, and `detectlesson` heartbeat.
+  - Reverse evidence confirms `sendsproblem`, `sproblemshown`, `probleminfo`, `unlockproblem`, `extendtime`, `slidenav` and lesson/presentation REST routes.
+  - Captcha/SMS navigation has native back/timeout cleanup and automatically sends SMS after a successful slider result.
+  - Batch sign-in locks a single lesson anchor and persists each account's token with a credential timestamp.
+  - App v2.6.1 local account removal never emits a server deletion tombstone and purges legacy queued tombstones on startup/key activation.
+  - Server v2.6.1 ignores remote account tombstones by default (`YKT_ALLOW_REMOTE_ACCOUNT_DELETE=0`), protecting cloud data from old clients.
+  - Lesson credentials are merged atomically by `lessonCredentialUpdatedAt`, so a stale client cannot erase a newer token.
+  - Frontend question activation resets old countdown state and preserves unsafe-sized numeric problem IDs as strings.
+  - Frontend/server can consume an official dynamic `wssUrl` with a configured fallback.
+  - Server presentation extraction now supports nested `data`, `presentationData`, top-level problems, shape images and relative URLs.
+  - Frontend WebSocket now consumes nested hello/data payloads, restores unlocked questions after reconnect and enriches a question from probleminfo without a request loop.
+  - Server validity fields now merge atomically; a client-side unknown result cannot erase explicit server expiry.
+  - Registered tenants no longer consume the unknown-key IP rate bucket.
+  - Admin key update/delete rejects mismatched key_id + raw key pairs instead of touching two tenants.
+  - Scanner camera errors and physical back now release the native scanner.
+  - Current automated result: 32 Python tests and 88 Node assertions pass.
+  - Python compile, Vue script extraction syntax, standalone JS syntax, PM2 syntax, pip dependency check and Bash syntax checks pass.
+  - Clean package `ykt-server-pm2-v2.6.1.zip` is rebuilt after final regression and extracted-package smoke testing.
+  - Package SHA-256: `6111dccc4612056bb1b757e3f2ba3cd4ac9e4bee173233e1f480b2b7e2bbad33`.
+- Open uncertainties:
+  - Whether the production endpoint returns any additional message aliases or response schema not present in the supplied captures.
+  - Whether AI response parsing and all type 0-4 payload shapes remain valid under every provider response.
+  - Production behavior still depends on the current external Yuketang protocol, live classroom state and configured AI providers.
+- Current blocker: none.
+- Next concrete action: deliver the final report and call out only the external live-verification and raw-HTTP risks.

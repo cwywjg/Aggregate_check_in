@@ -1,0 +1,99 @@
+# ==========================================
+# Uni-App (HBuilderX / CLI / Vue) 忽略规则
+# ==========================================
+unpackage/
+dist/
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.hbuilderx/
+*.uts
+
+# ==========================================
+# Python 虚拟环境与运行时缓存
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.test-venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# 敏感数据、本地凭证与数据库持久化文件
+# ==========================================
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data.db
+database.db
+app.db
+
+# 排除真实用户凭证（保留 .example 模板供开源参考）
+chaoxing_cookies.json
+!chaoxing_cookies.example.json
+accounts.json
+!accounts.example.json
+server_config.json
+!server_config.example.json
+
+# 环境变量敏感配置
+.env
+.env.local
+.env.production
+.env.staging
+ykt.env
+
+# ==========================================
+# 网络抓包与大型中间产物
+# ==========================================
+*.har
+har_output.txt
+*.log
+logs/
+*.tar.gz
+*.zip
+deploy_dist/
+deploy.zip
+
+# ==========================================
+# 系统与 IDE 编辑器配置
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~

@@ -1,0 +1,34 @@
+{
+  "save_time": "2026-08-23 12:00:00",
+  "cookies": {
+    "DSSTASH_LOG": "C_38-UN_866-US_100000001-T_1787425899144",
+    "KI4SO_SERVER_EC": "MOCK_KI4SO_SERVER_EC_TOKEN_SAMPLE_FOR_GITHUB_OPENSOURCE_PROJECT",
+    "UID": "100000001",
+    "_d": "1787425899143",
+    "_industry": "5",
+    "_tid": "100000002",
+    "_uid": "100000001",
+    "cx_p_token": "mock_cx_p_token_88888888888888888888",
+    "fid": "1001",
+    "fidsCount": "1",
+    "p_auth_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxMDAwMDAwMDEiLCJsb2dpblRpbWUiOjE3ODc0MjU4OTkxNDQsImV4cCI6MTc4ODAzMDY5OX0.MOCK_SIGNATURE_HASH_SAMPLE",
+    "sso_puid": "100000001",
+    "sso_role": "3",
+    "uf": "mock_uf_security_token_sample_string_for_testing_and_development_only",
+    "vc3": "mock_vc3_security_token_sample_string_for_testing_and_development_only",
+    "xxtenc": "mock_xxtenc_hash_sample_value_888888",
+    "JSESSIONID": "MOCK8888888888888888888888888888",
+    "route": "mock_route_hash_sample_value_8888"
+  },
+  "user_info": {
+    "uid": 100000002,
+    "puid": 100000001,
+    "name": "示例学员",
+    "nick": "示例学员",
+    "schoolname": "示例大学",
+    "uname": "20260001",
+    "phone": "13800138000",
+    "fid": 1001,
+    "dxfid": "866"
+  }
+}

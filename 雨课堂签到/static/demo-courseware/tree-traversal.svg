@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132B54"/><stop offset="1" stop-color="#276BA8"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1450" cy="80" r="300" fill="#7AD8FF" opacity=".08"/><circle cx="110" cy="830" r="270" fill="#9B87FF" opacity=".1"/>
+  <text x="110" y="130" fill="#91DBFF" font-family="Arial, sans-serif" font-size="27" letter-spacing="5">DATA STRUCTURES · 02</text>
+  <text x="110" y="235" fill="#FFF" font-family="Arial, sans-serif" font-size="72" font-weight="700">二叉树遍历</text>
+  <text x="112" y="288" fill="#D3E9FF" font-family="Arial, sans-serif" font-size="27">Binary Tree Traversal</text>
+  <g stroke="#9EDCFF" stroke-width="7" stroke-linecap="round" opacity=".86"><path d="M980 286L770 452M980 286L1190 452M770 452L650 630M770 452L890 630M1190 452L1310 630"/></g>
+  <g font-family="Arial, sans-serif" font-size="42" font-weight="700" text-anchor="middle">
+    <g><circle cx="980" cy="270" r="64" fill="#FFB54A"/><text x="980" y="285" fill="#1B325A">A</text></g>
+    <g><circle cx="770" cy="440" r="58" fill="#5ED4FF"/><text x="770" y="455" fill="#17385B">B</text></g>
+    <g><circle cx="1190" cy="440" r="58" fill="#9D91FF"/><text x="1190" y="455" fill="#292451">C</text></g>
+    <g><circle cx="650" cy="620" r="52" fill="#FFF"/><text x="650" y="635" fill="#2C5C8F">D</text></g>
+    <g><circle cx="890" cy="620" r="52" fill="#FFF"/><text x="890" y="635" fill="#2C5C8F">E</text></g>
+    <g><circle cx="1310" cy="620" r="52" fill="#FFF"/><text x="1310" y="635" fill="#2C5C8F">F</text></g>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="25" font-weight="700"><rect x="110" y="690" width="190" height="58" rx="29" fill="#FFF" fill-opacity=".16"/><text x="145" y="728" fill="#FFF">Preorder</text><rect x="320" y="690" width="180" height="58" rx="29" fill="#FFF" fill-opacity=".16"/><text x="361" y="728" fill="#FFF">Inorder</text><rect x="520" y="690" width="200" height="58" rx="29" fill="#FFF" fill-opacity=".16"/><text x="550" y="728" fill="#FFF">Postorder</text></g>
+  <text x="1360" y="815" fill="#A8DDFE" font-family="Arial, sans-serif" font-size="25">02 / 03</text>
+</svg>

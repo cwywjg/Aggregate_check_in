@@ -1,0 +1,158 @@
+# 雨课堂 APP 协议逆向与并发签到接口文档 (基于已有分析)
+
+本文档旨在通过对已完成的自动签到 Vue 客户端的剥离与分析，提取出雨课堂（Yuketang）核心的认证流程、设备指纹伪装参数以及扫码签到的 API 通讯调用链。
+
+此文档可帮助后续开发者快速理解**如何脱离官方 App 进行脱机 HTTP 请求发包、实现跨语言重构（如 Python、Go 等）**，同时规避基本的反爬风控机制。
+
+---
+
+## 一、 核心通讯前提
+
+1. **基础网关 (Base URL)**: `https://www.yuketang.cn`
+2. **防风控核心要点**:
+   - 绝大多数接口需要在请求头（Headers）中加入特定的特征标识和**设备指纹（Device Profile）**。
+   - 所有的登录与签到强依赖于正确的 [Cookie](file:///c:/Users/CWYWJG/Desktop/%E9%9B%A8%E8%AF%BE%E5%A0%82/1.vue#516-532)，特别是 `sessionid`、`sid` 和 `csrftoken`。
+
+## 二、 设备指纹伪装生成 (Device Profile)
+
+在每一次请求的 Header 中，必须严格遵守以下参数以绕过“设备异常”和“非真实手机”的拦截策略。这些参数模拟了雨课堂安卓端 v1.3.3 的环境。
+
+### HTTP Headers 通用模版
+
+```json
+{
+    "user-agent": "Android",
+    "x-client": "app",
+    "xtbz": "ykt",
+    "content-type": "application/json",
+    // 以下为设备环境特征
+    "brand": "xiaomi 13 pro", // 动态随机品牌 (Xiaomi, vivo, HUAWEI 等)
+    "uuid": "",               // 关键破解点：置空（不能传递自定义 UUID，否则会在云端校验不通过）
+    "buildnumber": "1610",
+    "xtua": "client=app&tag=1.3.3&platform=Android",
+    "systemversion": "12",    // 动态随机系统版本 (10-14)
+    "incremental": "43928172", // 本机随机编译号 (8位随机数字)
+    "version": "1.3.3",
+    "isphysicaldevice": "true"
+}
+```
+
+> **注意**：如果不携带以上这些 `xtua`、`buildnumber` 等专有头，后端会立即返回 403 乃至触发封号危险。
+
+---
+
+## 三、 突破登录鉴权流程
+
+登录流程分为三门槛：**腾讯防水墙滑块拦截 -> 手机验证码下发 -> 最终换取身份 Cookie**。
+
+### 1. 验证码发送唤起 (发送验证请求前需通过验证)
+
+借助腾讯验证码 (Tencent Captcha) 解决人机验证，拿到由腾讯防水墙下发的 `ticket` 和 `randstr`。
+
+**接口**: `POST /api/v3/user/code/send`
+
+**Body Payload**:
+```json
+{
+    "phoneNumber": "13800138000", // 目标手机号
+    "email": "",
+    "ticket": "v03_xxxxxxx...",   // 腾讯滑块获取
+    "rand": "abcd"                // 腾讯滑块获取
+}
+```
+**成功标志**: `res.code === 0`，代表手机验证码已发送至用户手机。
+
+### 2. 执行登录校验
+
+拿到短信验证码后进行 Token 换取。雨课堂可能会因为部分账号策略走不通 `/login/app` 接口，这里提供了一套**失败自动降级走 `/register/app`** 的双通道机制。
+
+**首发接口**: `POST /api/v3/user/login/app`
+**降级接口 (如首发失败且后端有提示)**: `POST /api/v3/user/register/app`
+
+**Body Payload**:
+```json
+{
+    "type": 3,
+    "phoneNumber": "13800138000",
+    "email": "",
+    "code": "123456",            // 接收到的6位手机验证码
+    "pushDeviceId": "",
+    "ticket": "v03_xxxxx...",    // 沿用之前的票据
+    "rand": "abcd"               // 沿用之前的票据
+}
+```
+
+**成功后的提取**:
+当返回 `code === 0` 时，读取返回 Response 头中的 `Set-Cookie`。必须从中正则匹配提取出 **`sessionid`**、**`sid`**、**`csrftoken`**，这三者合并就是该帐号打通后续生态的唯一凭证。
+
+*拼接范例*: `sessionid=xxx; sid=xxx; csrftoken=xxx; django_language=zh-cn;`
+
+### 3. 用户主页基本信息拉取 
+
+可用于每日监控 Cookie 是否过期，以及拉取学生名字、学校和 `uid` 留存备用。
+
+**接口**: `GET /v/course_meta/user_info`
+*备注*: Header 中除了正常的设备特征外，需带上刚拿到的 [Cookie](file:///c:/Users/CWYWJG/Desktop/%E9%9B%A8%E8%AF%BE%E5%A0%82/1.vue#516-532)。
+
+**响应体解析**:
+`res.data.user_profile.name` -> 真实姓名
+`res.data.user_profile.school` -> 学校名称
+`res.data.user_profile.user_id` -> 这个 `uid` 后面会在所有的通讯头中作为 `x-uid` 传入。
+
+---
+
+## 四、 课堂签到核心抓包链路
+
+这部分是重头戏。扫描雨课堂给定的二维码后，会得到一个包含动态令牌的 URL。我们需要向服务器做两步请求：“解密换取课程ID” 以及 “真实投递签到信标”。
+
+> **重要风控说明**：每一次 API 请求前，若 Cookie 内没有 `csrftoken`，必须伪造一段 32 位随机大小写加数字填充进 Header 的 `x-csrftoken` 中；如果已有，直接随队带上。这也是其底层的一个防御检测点。
+
+### Step 1: 二维码去壳，换取真实 Lesson ID
+
+得到包含 `yuketang.cn` 的实体二维码链接（带有 `dynamic-qr-code` 等路径）后：
+
+**接口**: `POST /api/v3/app/scan`
+
+**Body Payload**:
+```json
+{
+    "url": "https://www.yuketang.cn/api/v3/lesson/check-in/dynamic-qr-code?..."
+}
+```
+
+**响应提取**:
+成功返回 `code: 0`。从 `res.data.data.value` 字段提取到真实的整型 `lessonId`（课堂房间号）。
+
+### Step 2: 实施并发落座签到
+
+向服务器宣告当前已上线进入课堂房间。
+
+**接口**: `POST /api/v3/lesson/checkin`
+
+**Body Payload**:
+```json
+{
+    "source": 21,              // 特征值，指代由 APP 内置扫描器进入的
+    "lessonId": 123456,        // 上一步换取出来的 lessonId
+    "joinIfNotIn": true        // 被动拉入班级检测
+}
+```
+
+**响应提取**:
+成功后 `res.data.code === 0`，代表服务器已录入签到。
+系统此时还会下发一个极高权限的 **`lessonToken`** 字段，**逆向开发者应当妥善把它缓存至上下文中**（用于接下来的课堂点名回答问题、弹幕发送或者小测作答等深度接口）。
+
+---
+
+## 五、 工程化与并发建议
+
+1. **多账号并发排队与延迟**
+   实测中，如果不做限制的同时让 50-100 个请求发起 `POST /api/v3/lesson/checkin` 到相同的一端，会大概率触发反制措施导致同一源 IP 失效。建议：
+   - 使用异步机制，加入 `Promise.all` 发包。
+   - 对请求引入简单的网络抖动机制：失败捕获后可原地 `Sleep(800ms)` 并开启至多三轮安全重试。
+
+2. **打捞追尾机制**
+   二维码具有极强的“秒级变相时效性”。如果前两个账号扫码签成功了，后面列队的数据因为网络拥堵到达云端时，二维码签到已刷新，需要建立“失败名单”，方便操作者重新对准大屏幕抓拍最新的二维码对失败名单独立发起二次投递。
+
+3. **鉴权巡检**
+   Cookie 默认周期有限（大约 7-15天）。工程化时最好挂一个 Daily 定时任务访问 `/user_info`，一旦非 200 或缺少 `Success: true` 立即标记过期（`Expired`），将无效 Cookie 的发送剔除请求队列，避免风控信誉度降低。

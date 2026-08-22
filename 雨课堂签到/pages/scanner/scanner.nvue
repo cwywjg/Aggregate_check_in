@@ -1,0 +1,161 @@
+<template>
+	<view class="scanner-page">
+		<!-- 原生 barcode 扫码组件：直接在页面内渲染相机画面，不跳 Activity -->
+		<barcode 
+			ref="barcodeRef"
+			class="barcode-view"
+			autostart="true"
+			:filters="[0]"
+			@marked="onScanSuccess"
+			@error="onScanError"
+		></barcode>
+
+		<!-- 提示文字（mPaaS 引擎自带扫描框，不需要额外叠加框） -->
+		<view class="tip-bar">
+			<text class="scan-tip">将雨课堂二维码放入框内自动识别</text>
+		</view>
+		
+		<!-- 顶部操作栏 -->
+		<view class="top-bar">
+			<text class="back-btn" @click="goBack">✕ 取消</text>
+		</view>
+	</view>
+</template>
+
+<script>
+	// 注意：nvue 页面不能使用 <script setup>，需要用 Options API
+	export default {
+		data() {
+			return {
+				hasResult: false
+			}
+		},
+		methods: {
+			onScanSuccess(e) {
+				if (this.hasResult) return;
+				this.hasResult = true;
+				
+				// 安全提取扫码结果
+				let result = '';
+				try {
+					if (e.detail && e.detail.result) {
+						result = e.detail.result;
+					} else if (e.detail && typeof e.detail === 'string') {
+						result = e.detail;
+					} else if (e.result) {
+						result = e.result;
+					} else if (typeof e === 'string') {
+						result = e;
+					}
+				} catch(err) {}
+				
+				if (!result) {
+					this.hasResult = false;
+					return;
+				}
+				
+				// ★ 关键：先停掉原生扫码引擎，释放相机资源
+				try {
+					this.$refs.barcodeRef.cancel();
+				} catch(err) {}
+				
+				// ★ 关键：必须用 setTimeout 延迟执行，不能在原生回调线程里直接调用 JS Bridge
+				// 否则会阻塞原生渲染线程导致 APP 卡死
+				const scanResult = result;
+				setTimeout(() => {
+					uni.$emit('scanResult', {
+						type: 'scanResult',
+						result: scanResult
+					});
+					uni.vibrateShort();
+					uni.navigateBack();
+				}, 200);
+			},
+			
+			onScanError(e) {
+				// 不做任何操作，避免触发原生线程问题
+			},
+			
+			goBack() {
+				try {
+					this.$refs.barcodeRef.cancel();
+				} catch(err) {}
+				
+				setTimeout(() => {
+					uni.$emit('scanResult', {
+						type: 'scanCancel'
+					});
+					uni.navigateBack();
+				}, 100);
+			}
+		},
+		
+		// 页面卸载时确保发送取消事件（用户按物理返回键）
+		onUnload() {
+			if (!this.hasResult) {
+				uni.$emit('scanResult', {
+					type: 'scanCancel'
+				});
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.scanner-page {
+		flex: 1;
+		background-color: #000000;
+		position: relative;
+	}
+	
+	.barcode-view {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+	
+	/* 底部提示文字栏 */
+	.tip-bar {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 180rpx;
+		align-items: center;
+	}
+	
+	.scan-tip {
+		color: rgba(255, 255, 255, 0.75);
+		font-size: 28rpx;
+		text-align: center;
+	}
+	
+	.top-bar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		padding-top: 100rpx;
+		padding-left: 32rpx;
+		padding-right: 32rpx;
+		padding-bottom: 20rpx;
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+	
+	.back-btn {
+		color: #FFFFFF;
+		font-size: 30rpx;
+		font-weight: bold;
+		padding-top: 12rpx;
+		padding-bottom: 12rpx;
+		padding-left: 24rpx;
+		padding-right: 24rpx;
+		background-color: rgba(0, 0, 0, 0.35);
+		border-radius: 40rpx;
+		border-width: 1rpx;
+		border-style: solid;
+		border-color: rgba(255, 255, 255, 0.15);
+	}
+</style>
