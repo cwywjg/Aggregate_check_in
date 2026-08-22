@@ -2,7 +2,7 @@
 
 # ⚡ Protocol App Reverse Suite (高校教学协议逆向与自动化工程全套开源套件)
 
-### 基于 Uni-App 跨平台前端 + Python/Golang 高并发后端的教学协议逆向、主动保活与多模态 AI 答题系统
+### 基于 Uni-App 跨平台前端 + Python/Golang 高并发后端的教学协议逆向、主动保活与多模态 AI 视觉答题系统
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Vue](https://img.shields.io/badge/Vue.js-2%20%2F%203-4FC08D?logo=vuedotjs)](https://vuejs.org/)
@@ -10,6 +10,14 @@
 [![Go](https://img.shields.io/badge/Engine-Golang%20MMTLS-00ADD8?logo=go)](https://golang.org/)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Linux%20%7C%20H5-lightgrey.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python)](https://www.python.org/)
+
+<p align="center">
+  <a href="#-android-安装包-apk-直接下载">📱 <b>下载 Android APK 安装包</b></a> •
+  <a href="#-ai-多模态大模型配置与-api-密钥获取教程">🧠 <b>AI 密钥申请与配置</b></a> •
+  <a href="#3-快速开始手把手保姆级运行教程">🚀 <b>快速开始</b></a> •
+  <a href="#4-服务器永久生产部署指南linux-常驻">🖥️ <b>服务器永久部署</b></a> •
+  <a href="#-常见踩坑与故障排查-faq">💡 <b>常见 FAQ</b></a>
+</p>
 
 </div>
 
@@ -21,6 +29,19 @@
 
 ---
 
+## 📱 Android 安装包 (APK) 直接下载
+
+如果您不想从源码编译打包，可以直接下载仓库已编译好的 Release 安装包进行安装使用：
+
+| 应用名称 | 文件路径 | 文件大小 | 核心功能亮点 | 适用系统 |
+| :--- | :--- | :---: | :--- | :--- |
+| **超星学习通多账号助手** | [`release/学习通签到.apk`](./release/学习通签到.apk) | 14.98 MB | 纯本地独立运行、手机短信/密码登录、16 线程并发批量扫码、动态码打捞 | Android 7.0+ |
+| **雨课堂分布式答题助手** | [`release/雨课堂签到.apk`](./release/雨课堂签到.apk) | 18.17 MB | WebSocket 课堂实时信令监听、多模态 AI 视觉解题、多账号批量提交、远程配置热更 | Android 7.0+ |
+
+> 💡 **安装提示**：下载 APK 后在 Android 手机上安装，安装时勾选“允许来自此来源的应用”即可正常安装。
+
+---
+
 ## 📑 目录
 
 - [1. 项目全景架构与技术选型](#1-项目全景架构与技术选型)
@@ -29,14 +50,20 @@
   - [3.1 超星学习通快速上手（纯本地版）](#31-超星学习通快速上手纯本地版)
   - [3.2 微助教系统快速上手（全栈版）](#32-微助教系统快速上手全栈版)
   - [3.3 雨课堂系统快速上手（AI 视觉答题版）](#33-雨课堂系统快速上手ai-视觉答题版)
-- [4. 服务器永久生产部署指南（Linux 常驻）](#4-服务器永久生产部署指南linux-常驻)
-  - [4.1 Docker Compose 一键容器化部署](#41-docker-compose-一键容器化部署)
-  - [4.2 Systemd 裸机守护常驻部署](#42-systemd-裸机守护常驻部署)
-  - [4.3 Nginx 反向代理与 SSL 证书配置](#43-nginx-反向代理与-ssl-证书配置)
-- [5. 配置文件与环境变量全量说明字典](#5-配置文件与环境变量全量说明字典)
-- [6. 推荐仓库目录结构](#6-推荐仓库目录结构)
-- [7. 常见踩坑与故障排查 FAQ](#7-常见踩坑与故障排查-faq)
-- [8. 开源许可证与安全合规](#8-开源许可证与安全合规)
+- [4. 🧠 AI 多模态大模型配置与 API 密钥获取教程](#4--ai-多模态大模型配置与-api-密钥获取教程)
+  - [4.1 推荐渠道一：硅基流动 (SiliconFlow) - 免费快速首选](#41-推荐渠道一硅基流动-siliconflow---免费快速首选)
+  - [4.2 推荐渠道二：NVIDIA Build (NIM) - 免费高精度](#42-推荐渠道二nvidia-build-nim---免费高精度)
+  - [4.3 推荐渠道三：DeepSeek / OpenAI 兼容中转 / Google Gemini](#43-推荐渠道三deepseek--openai-兼容中转--google-gemini)
+  - [4.4 双模型智能竞速与自动降级容灾机制](#44-双模型智能竞速与自动降级容灾机制)
+  - [4.5 AI 引擎连通性与解题自测指令](#45-ai-引擎连通性与解题自测指令)
+- [5. 服务器永久生产部署指南（Linux 常驻）](#5-服务器永久生产部署指南linux-常驻)
+  - [5.1 Docker Compose 一键容器化部署](#51-docker-compose-一键容器化部署)
+  - [5.2 Systemd 裸机守护常驻部署](#52-systemd-裸机守护常驻部署)
+  - [5.3 Nginx 反向代理与 SSL 证书配置](#53-nginx-反向代理与-ssl-证书配置)
+- [6. 配置文件与环境变量全量说明字典](#6-配置文件与环境变量全量说明字典)
+- [7. 推荐仓库目录结构](#7-推荐仓库目录结构)
+- [8. 常见踩坑与故障排查 FAQ](#8-常见踩坑与故障排查-faq)
+- [9. 开源许可证与安全合规](#9-开源许可证与安全合规)
 
 ---
 
@@ -101,6 +128,7 @@ graph TD
 
 ### 📱 1. 超星学习通签到系统 (`学习通签到/`)
 - **纯本地沙盒架构**：无需自建任何后端服务，所有账号凭证（Cookie/Token）严格保存在手机本地沙盒，零泄露风险。
+- **真实设备硬件指纹伪装**：内置国内主流品牌（小米/华为/vivo/OPPO/荣耀/三星等 40+ 款旗舰机型）独立硬件参数，单机多账号具备完全物理隔离的指纹画像。
 - **双鉴权登录支持**：
   - **短信验证码登录**：逆向还原移动端时间戳加盐 MD5 签名算法（`to + Salt + time`）。
   - **账号密码登录**：直接对接超星 Passport 移动端原生网关。
@@ -248,13 +276,15 @@ python -m venv venv
 # 2. 安装所需依赖
 pip install -r requirements.txt
 
-# 3. 配置 .env 文件
+# 3. 复制环境配置文件
 copy .env.example .env   # Linux: cp .env.example .env
 ```
 
-编辑 `.env` 文件，填入您的大模型 API 密钥（以 SiliconFlow 为例）：
+编辑 `.env` 文件，填入您的大模型 API 密钥（获取方法请参考下方 [第 4 节 AI 密钥获取教程](#4--ai-多模态大模型配置与-api-密钥获取教程)）：
 ```ini
 PORT=5000
+
+# 推荐选用国内极速免费大模型 (SiliconFlow 硅基流动)
 AI_PROVIDER=siliconflow
 AI_API_KEY=sk-your-siliconflow-api-key-here
 AI_BASE_URL=https://api.siliconflow.cn/v1
@@ -276,11 +306,128 @@ python api_server.py
 
 ---
 
-## 4. 服务器永久生产部署指南（Linux 常驻）
+## 4. 🧠 AI 多模态大模型配置与 API 密钥获取教程
+
+雨课堂智能答题引擎采用**多模态大模型（Vision LLM）**技术，能够自动识别课件中的数学公式、函数图像、多选题选项及复杂排版。以下为您提供各大主流模型平台的 **API 密钥免费申请与配置指南**：
+
+```
+[课件 PPT / 手机截屏] ──► [提取高清图+题干] ──► [组装 Vision Prompt] ──► [调用 AI API] ──► [毫秒级解析出 JSON 答案]
+```
+
+### 4.1 推荐渠道一：硅基流动 (SiliconFlow) - 免费快速首选 ⭐️
+
+> **优势**：国内直连超低延迟（0.8~1.5秒），新用户注册即赠送免费额度，官方原生支持顶级开源视觉大模型 `Qwen/Qwen2.5-VL-72B-Instruct`。
+
+1. **注册与创建密钥**：
+   - 打开官网注册：👉 **[https://cloud.siliconflow.cn/](https://cloud.siliconflow.cn/)**
+   - 进入控制台 -> 点击左侧菜单 **“API 密钥”** -> 点击 **“新建 API 密钥”**。
+   - 复制生成的密钥字符串（以 `sk-` 开头）。
+2. **在 `雨课堂签到/.env` 中配置**：
+   ```ini
+   AI_PROVIDER=siliconflow
+   AI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   AI_BASE_URL=https://api.siliconflow.cn/v1
+   AI_MODELS=Qwen/Qwen2.5-VL-72B-Instruct
+   SILICONFLOW_IMAGE_DETAIL=low
+   ```
+
+---
+
+### 4.2 推荐渠道二：NVIDIA Build (NIM) - 免费高精度
+
+> **优势**：NVIDIA 官方提供 1000 次免费 API 调用积分，支持 Google Gemma-4、Meta Llama-3.2-Vision 等顶尖工业级模型。
+
+1. **注册与创建密钥**：
+   - 打开官网：👉 **[https://build.nvidia.com/](https://build.nvidia.com/)**
+   - 使用邮箱注册并登录 -> 在模型列表中搜索 `google/gemma-4-31b-it` 或 `meta/llama-3.2-90b-vision-instruct`。
+   - 点击 **“Get API Key”** -> 复制生成的密钥（以 `nvapi-` 开头）。
+2. **在 `雨课堂签到/.env` 中配置**：
+   ```ini
+   AI_PROVIDER=nvidia
+   AI_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   AI_BASE_URL=https://integrate.api.nvidia.com/v1
+   AI_MODELS=google/gemma-4-31b-it
+   ```
+
+---
+
+### 4.3 推荐渠道三：DeepSeek / OpenAI 兼容中转 / Google Gemini
+
+如果您拥有其他平台的 API 密钥，可直接使用标准兼容模式配置：
+
+#### ① DeepSeek 官方配置
+```ini
+AI_PROVIDER=compatible
+AI_API_KEY=sk-your-deepseek-key
+AI_BASE_URL=https://api.deepseek.com/v1
+AI_MODELS=deepseek-chat
+```
+
+#### ② Google Gemini 官方配置
+```ini
+AI_PROVIDER=gemini
+AI_API_KEY=AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+AI_MODELS=gemini-2.0-flash,gemini-2.5-flash
+```
+
+---
+
+### 4.4 双模型智能竞速与自动降级容灾机制
+
+为防止课堂答题因单个大模型网络卡顿而错过教师提交截止时间，后台内置了**双模型双通道自动熔断调度算法**：
+
+```
+                    ┌────────────────────────┐
+                    │ 收到课堂推题信令与截屏 │
+                    └───────────┬────────────┘
+                                │
+                 ┌──────────────┴──────────────┐
+                 ▼                             ▼
+        【主通道: 深度思考模型】        【备用通道: Fast 极速模型】
+      Qwen2.5-VL-72B (Thinking)            Qwen2.5-VL-7B (Fast)
+                 │                             │
+         （限时 25 秒竞速）             （主通道超过 25s 自动接管）
+                 │                             │
+                 └──────────────┬──────────────┘
+                                ▼
+                    ┌────────────────────────┐
+                    │ 0.1s 提取标准 JSON 答案 │
+                    │ 触发多账号并发打卡提交 │
+                    └────────────────────────┘
+```
+
+* **配置控制参数**：
+  ```ini
+  AI_ENABLE_THINKING=1        # 开启深度思考模型优先
+  AI_THINKING_TIMEOUT=25      # 深度思考超时阈值设为 25 秒
+  AI_ROUTE_CYCLES=2           # 失败自动交替重试 2 轮
+  ```
+
+---
+
+### 4.5 AI 引擎连通性与解题自测指令
+
+配置好 `.env` 密钥后，可以在终端运行以下指令一键验证连通性：
+
+```bash
+# 1. 启动服务后调用健康检查接口
+curl -s http://127.0.0.1:5000/api/ai/health
+
+# 预期返回包含大模型延迟与健康状态：
+# {"code":0,"data":{"status":"ok","models":["Qwen/Qwen2.5-VL-72B-Instruct"],"latency_ms":1250}}
+
+# 2. 运行内置全真解题单测
+cd 雨课堂签到
+python test_ai_real.py
+```
+
+---
+
+## 5. 服务器永久生产部署指南（Linux 常驻）
 
 > 📖 **更详细的逐步运维指令与排错方案请参阅 [docs/server_deploy.md](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/docs/server_deploy.md)**
 
-### 4.1 Docker Compose 一键容器化部署
+### 5.1 Docker Compose 一键容器化部署
 
 在 Linux 服务器（Ubuntu 20.04/22.04/24.04）上推荐使用 Docker Compose 统一编排：
 
@@ -295,7 +442,7 @@ docker compose up -d
 docker compose ps
 ```
 
-### 4.2 Systemd 裸机守护常驻部署
+### 5.2 Systemd 裸机守护常驻部署
 
 使用 Linux 原生 Systemd 管理进程，确保开机自启、崩溃自动秒级拉起：
 
@@ -329,7 +476,7 @@ sudo systemctl enable --now wzj-api
 sudo systemctl status wzj-api --no-pager
 ```
 
-### 4.3 Nginx 反向代理与 SSL 证书配置
+### 5.3 Nginx 反向代理与 SSL 证书配置
 
 配置 Nginx 支持 50MB 图片上传、WebSocket 协议升级与 HTTPS 加密：
 
@@ -362,7 +509,7 @@ sudo certbot --nginx -d api.yourdomain.com --non-interactive --agree-tos -m your
 
 ---
 
-## 5. 配置文件与环境变量全量说明字典
+## 6. 配置文件与环境变量全量说明字典
 
 ### 微助教后端环境变量 (`微助教签到/server/.env`)
 | 变量名 | 默认值 | 必填 | 作用与示例 |
@@ -384,7 +531,7 @@ sudo certbot --nginx -d api.yourdomain.com --non-interactive --agree-tos -m your
 
 ---
 
-## 6. 推荐仓库目录结构
+## 7. 推荐仓库目录结构
 
 ```
 protocol-app-suite/
@@ -393,13 +540,17 @@ protocol-app-suite/
 ├── README.md                          # 🌟 项目全景主文档
 ├── docker-compose.yml                 # 生产级 Docker 编排配置
 │
+├── release/                           # 📱 编译好的 Release 安装包
+│   ├── 学习通签到.apk                  # 超星学习通多账号助手 Android 安装包 (14.98 MB)
+│   └── 雨课堂签到.apk                  # 雨课堂分布式 AI 助手 Android 安装包 (18.17 MB)
+│
 ├── docs/                              # 📚 深度文档中心
 │   ├── server_deploy.md               # Linux 服务器永久生产部署实战手册
 │   ├── protocol_flow.md               # 网络协议深度交互时序与报文规范
 │   └── faq.md                         # 常见踩坑与故障排查 FAQ
 │
 ├── 学习通签到/                         # 📱 超星学习通多账号助手 (纯本地独立运行)
-│   ├── pages/index/index.vue          # 前端主页面 (Apple 质感 UI / 16 并发批量扫码 / 精准打捞)
+│   ├── pages/index/index.vue          # 前端主页面 (Apple 质感 UI / 16 并发批量扫码 / 精准打捞 / 硬件指纹)
 │   ├── xxt_login.py                   # Python 协议登录、MD5 加盐签名与 Cookie 提取工具
 │   ├── chaoxing_cookies.example.json  # 凭证存储结构模板
 │   ├── manifest.json                  # App 打包与权限配置
@@ -438,7 +589,7 @@ protocol-app-suite/
 
 ---
 
-## 7. 常见踩坑与故障排查 FAQ
+## 8. 常见踩坑与故障排查 FAQ
 
 > 💡 **完整 20+ 场景排障请参阅 [docs/faq.md](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/docs/faq.md)**
 
@@ -452,7 +603,7 @@ protocol-app-suite/
 
 ---
 
-## 8. 开源许可证与安全合规
+## 9. 开源许可证与安全合规
 
 本项目采用 **[MIT License](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/LICENSE)** 开源许可证。
 
