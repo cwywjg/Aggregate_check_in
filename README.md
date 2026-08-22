@@ -1,239 +1,430 @@
-# 协议类 APP 逆向与自动化工程全套开源套件 (Protocol App Reverse Suite)
+<div align="center">
 
-> ⚠️免责声明：本项目仅供网络安全、计算机编程技术学习研究使用，禁止用于任何违规业务，禁止用于绕过官方限制、非正规批量操作。所有使用者自行承担全部法律与相关责任。
+# ⚡ Protocol App Reverse Suite (高校教学协议逆向与自动化工程全套开源套件)
+
+### 基于 Uni-App 跨平台前端 + Python/Golang 高并发后端的教学协议逆向、主动保活与多模态 AI 答题系统
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Vue](https://img.shields.io/badge/Vue.js-2%20%2F%203-4FC08D?logo=vuedotjs)](https://vuejs.org/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20%2F%20Flask-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Go](https://img.shields.io/badge/Engine-Golang%20MMTLS-00ADD8?logo=go)](https://golang.org/)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Linux%20%7C%20H5-lightgrey.svg)]()
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python)](https://www.python.org/)
+
+</div>
 
 ---
 
-## 📌 项目简介
-
-本项目是一套基于真实高校教学与签到平台（**超星学习通**、**微助教**、**雨课堂**）网络通信协议逆向分析的开源工程。项目包含完整的 **Uni-App 跨平台移动客户端（Vue 3 / Vue 2）**、**自研高性能高并发后端服务（Python FastAPI / Flask + Golang MMTLS）**、**三层纵深主动保活引擎**、**多模态 AI 智能视觉答题系统** 与 **全套 Linux 生产级永久常驻部署方案**。
-
-项目已完全清除所有真实用户数据、个人隐私信息与调试垃圾代码，核心业务逻辑、网络协议交互流程、接口 API 地址、签名加密算法、WebSocket 信令交互均 **100% 原样保留**，开箱即可直接本地调试与生产部署。
+> ⚠️ **免责声明（Mandatory Disclaimer）**  
+> **本项目仅供网络安全攻防研究、计算机网络通信协议逆向分析与软件工程教学研究使用。**  
+> 严禁将本项目用于任何非法用途、商业牟利、批量作弊或破坏学校正常教学秩序的行为。任何使用者因违规使用产生的账号封禁、系统限制或法律责任，均由使用者本人独立承担，与本项目作者及贡献者无关。
 
 ---
 
-## 🏗️ 系统整体架构图
+## 📑 目录
+
+- [1. 项目全景架构与技术选型](#1-项目全景架构与技术选型)
+- [2. 三大子系统核心特性](#2-三大子系统核心特性)
+- [3. 快速开始（手把手保姆级运行教程）](#3-快速开始手把手保姆级运行教程)
+  - [3.1 超星学习通快速上手（纯本地版）](#31-超星学习通快速上手纯本地版)
+  - [3.2 微助教系统快速上手（全栈版）](#32-微助教系统快速上手全栈版)
+  - [3.3 雨课堂系统快速上手（AI 视觉答题版）](#33-雨课堂系统快速上手ai-视觉答题版)
+- [4. 服务器永久生产部署指南（Linux 常驻）](#4-服务器永久生产部署指南linux-常驻)
+  - [4.1 Docker Compose 一键容器化部署](#41-docker-compose-一键容器化部署)
+  - [4.2 Systemd 裸机守护常驻部署](#42-systemd-裸机守护常驻部署)
+  - [4.3 Nginx 反向代理与 SSL 证书配置](#43-nginx-反向代理与-ssl-证书配置)
+- [5. 配置文件与环境变量全量说明字典](#5-配置文件与环境变量全量说明字典)
+- [6. 推荐仓库目录结构](#6-推荐仓库目录结构)
+- [7. 常见踩坑与故障排查 FAQ](#7-常见踩坑与故障排查-faq)
+- [8. 开源许可证与安全合规](#8-开源许可证与安全合规)
+
+---
+
+## 1. 项目全景架构与技术选型
+
+本项目由前端客户端、中台调度服务、协议底座和云端 AI 推理引擎四层构成：
 
 ```mermaid
 graph TD
-    subgraph Client_Layer ["移动客户端 (Uni-App)"]
-        A1["学习通多账号助手 (纯本地版)"]
-        A2["微助教签到答题助手 (App)"]
-        A3["雨课堂分布式助手 (App)"]
+    subgraph Client_Layer ["📱 跨平台移动客户端 (Uni-App)"]
+        A1["超星学习通助手 (纯本地存储/零服务器依赖)"]
+        A2["微助教助手 (多源竞速/全手势卡片UI)"]
+        A3["雨课堂助手 (分布式热切/多账号矩阵)"]
     end
 
-    subgraph Service_Gateway ["服务器与通信网关"]
-        Nginx["Nginx 反向代理网关 (:80 / :443)"]
-        FastAPI["微助教调度后端 (FastAPI :17521)"]
-        FlaskAPI["雨课堂 AI 调度后端 (Flask :5000)"]
-        YYBGo["微信 MMTLS 协议引擎 (yyb-go :8999)"]
+    subgraph Gateway_Layer ["🌐 生产网关与反向代理"]
+        Nginx["Nginx 高性能反代网关 (:80 / :443 / SSL)"]
     end
 
-    subgraph Core_Engines ["核心算法与引擎"]
+    subgraph Service_Layer ["⚙️ 自研后端核心调度集群"]
+        WZJ_API["微助教 FastAPI 后端 (:17521)<br/>- 0.2s 302 毫秒直捕<br/>- Web 管理控制台 (/070419)"]
+        YYB_Engine["微信 MMTLS 协议引擎 (:8999)<br/>- 长效凭证维护<br/>- 免扫码获取小程序 Code"]
+        YKT_API["雨课堂 Flask/Waitress 后端 (:5000)<br/>- WebSocket 课堂信令监听<br/>- 账号有效性巡检"]
+        AI_Engine["多模态 AI 题目解析引擎<br/>- 视觉图像 Prompt 路由<br/>- 双模型竞速熔断"]
+    end
+
+    subgraph Storage_Layer ["💾 持久化存储与算法"]
+        DB["SQLite 3 (WAL 无锁并发)"]
         Keepalive["三层纵深主动保活引擎"]
-        Jitter["Physics Jitter GPS 微扰动算法"]
-        FayeWSS["Faye Bayeux 动态二维码截获"]
-        AISolver["多模态大模型视觉解题路由 (Qwen/Nemotron)"]
+        Jitter["Physics Jitter 5~10m 微扰动"]
+        JSONStore["线程安全 SafeJsonStore"]
     end
 
-    subgraph Official_Platform ["官方平台服务端"]
-        ChaoXingSvr["超星官方集群 (passport2/mobilelearn)"]
-        TeacherMateSvr["微助教官方集群 (teachermate.cn/faye)"]
-        YuKeTangSvr["雨课堂官方集群 (changjiang.yuketang.cn)"]
+    subgraph Target_Platforms ["🎯 目标官方平台"]
+        CX_Svr["超星学习通官方集群"]
+        TM_Svr["微助教官方集群 & Faye WSS"]
+        YK_Svr["雨课堂官方集群 & WSS"]
     end
 
-    A1 -->|直连官方 Passport/MobileLearn| ChaoXingSvr
-    A2 -->|HTTP / X-API-Key| FastAPI
-    A3 -->|HTTP / Sync| FlaskAPI
+    A1 -->|纯前端直连 / 加盐 MD5 签名| CX_Svr
+    A2 -->|HTTP REST / X-API-Key| Nginx
+    A3 -->|HTTP REST / 同步| Nginx
 
-    FastAPI --> Keepalive
-    FastAPI --> Jitter
-    FastAPI --> FayeWSS
-    FastAPI --> YYBGo
-    FlaskAPI --> AISolver
+    Nginx --> WZJ_API
+    Nginx --> YKT_API
 
-    YYBGo -->|MMTLS 免扫码换票| TeacherMateSvr
-    FayeWSS -->|WSS 广播监听| TeacherMateSvr
-    FastAPI -->|HTTP 302 毫秒直捕| TeacherMateSvr
-    FlaskAPI -->|WSS 课堂监听 & 打卡| YuKeTangSvr
+    WZJ_API --> YYB_Engine
+    WZJ_API --> Keepalive
+    WZJ_API --> Jitter
+    WZJ_API --> DB
+    WZJ_API -->|302 Location 直捕 / Faye 动态码截获| TM_Svr
+    YYB_Engine -->|MMTLS 底层通信| TM_Svr
+
+    YKT_API --> AI_Engine
+    YKT_API --> JSONStore
+    YKT_API -->|WSS 课堂实时双向信令| YK_Svr
 ```
 
 ---
 
-## 🛠️ 技术栈清单
+## 2. 三大子系统核心特性
 
-| 分层 | 技术选型 | 核心作用与特性 |
-| :--- | :--- | :--- |
-| **跨平台客户端** | Vue 3 / Vue 2 + Uni-App | 跨 Android / iOS / H5 原生渲染，Apple 质感 UI，全手势与多账号矩阵 |
-| **微助教调度后端** | Python 3.10+ / FastAPI / Uvicorn | 纯无锁极速全并发、302 Location 毫秒直捕、RESTful 接口、Web 控制台 |
-| **微信协议底座** | Golang (yyb-go) | 微信 MMTLS 底层双向通信、长效 Token 维护、免扫码换取小程序 Code |
-| **雨课堂 AI 后端** | Python 3.10+ / Flask / Waitress | WebSocket 课堂实时信令监听、多模态大模型视觉图像理解、高并发多账号提交 |
-| **持久化存储** | SQLite 3 (WAL 模式) + JSON Store | 线程安全、无锁并发读写、冷备份支持 |
-| **生产级运维托管** | Docker Compose / Systemd / Nginx / PM2 | 崩溃自愈、日志轮转、HTTPS 自动化证书、守护进程永久常驻 |
+### 📱 1. 超星学习通签到系统 (`学习通签到/`)
+- **纯本地沙盒架构**：无需自建任何后端服务，所有账号凭证（Cookie/Token）严格保存在手机本地沙盒，零泄露风险。
+- **双鉴权登录支持**：
+  - **短信验证码登录**：逆向还原移动端时间戳加盐 MD5 签名算法（`to + Salt + time`）。
+  - **账号密码登录**：直接对接超星 Passport 移动端原生网关。
+- **16 线程高并发打卡**：基于 Promise 任务池调度，多账号毫秒级瞬间并发提交。
+- **智能打捞队列（Salvage Queue）**：针对因网络延迟未成功的账号，自动留存打捞队列，待教师大屏刷新二维码后一键对失败账号精准补签。
 
----
+### ⚡ 2. 微助教签到与答题系统 (`微助教签到/`)
+- **0.2 秒 302 Location 毫秒直捕**：打卡请求直接直连微助教网关，关闭自动重定向，直接在 HTTP 302 Location 头中解析打卡名次，彻底跳过网页 DOM 渲染，实现 0.15~0.25 秒极速打卡。
+- **三层纵深主动保活引擎 (Keepalive Engine)**：
+  - **Layer 1（YYB 凭证轮换）**：微信 Access Token 每 90 分钟自动换新（提前 30 分钟轮换），失败触发 5 分钟短退避复查。
+  - **Layer 2（MMTLS 链路探测）**：开机立即实测，每 20~30 分钟随机抖动向微信端发起独立小程序 Code 申请，保持底层连接鲜活。
+  - **Layer 3（微助教 Session 刷新）**：每 60 分钟巡检，Cookie 剩余有效时长 < 2 小时时自动执行 OAuth 静默换票。
+- **GPS 5~10 米物理微扰动 (Physics Jitter)**：自动在基准坐标周围施加真实物理微偏差，既保证全员通过地理围栏，又彻底规避多账号同坐标风控。
+- **Faye Bayeux WebSocket 动态码秒截**：挂起长轮询订阅课堂频道，教师端动态码更新瞬间 0 毫秒触发全员打卡。
+- **多账号答题绝对数据隔离**：单选/多选/判断/填空/主观论述全题型支持，支持 OSS 签名图片/音频作答上传。
 
-## 🌟 三套系统核心功能与特性矩阵
-
-### 1. 超星学习通签到系统 (`学习通签到/`)
-* **纯本地零依赖**：零服务器要求，所有登录凭据只存储在当前设备的本地沙盒中，100% 离线独立运行。
-* **双鉴权登录**：支持【手机号 + 短信验证码】与【手机号 / 学号 / 账号 + 密码】两种模式，内置纯 JS MD5 签名生成算法（`phone + Salt + timestamp`）。
-* **全并发批量扫码**：16 并发线程池，一键同时为矩阵内所有账号打卡。
-* **智能打捞机制**：针对因网络抖动或二维码刷新未成功的账号，自动移入打捞队列，待大屏幕新码刷新后一键补签。
-
-### 2. 微助教签到与智能答题系统 (`微助教签到/`)
-* **0.2 秒 302 Location 毫秒直捕**：直连打卡端点，关闭自动重定向，在 HTTP 302 Header 阶段解析打卡名次，耗时仅 0.15~0.25 秒。
-* **三层纵深主动保活引擎 (Keepalive Engine)**：
-  - Layer 1：微信底层 Token 90 分钟自动轮换（提前 30 分钟换新）。
-  - Layer 2：独立小程序 Code 链路 20~30 分钟随机抖动探测。
-  - Layer 3：微助教 Session Cookie 周期性刷新（剩余 < 2 小时自动 OAuth 静默续期）。
-* **GPS 5~10 米物理微扰动 (Physics Jitter)**：在基准坐标周围施加真实人群离散微偏差，彻底规避多账号同经纬度风控。
-* **Faye Bayeux WebSocket 动态码秒截**：挂起长轮询订阅课堂通道，0 毫秒捕获新码并触发全员并发打卡。
-* **全题型智能答题**：单选/多选/判断/填空/主观论述题，多账号数据严格物理隔离。
-
-### 3. 雨课堂签到与多模态 AI 视觉答题系统 (`雨课堂签到/`)
-* **WebSocket 课堂实时信令监听**：全双工连接课堂通道，毫秒级捕获教师推题与互动事件。
-* **多模态大模型视觉解题闭环**：提取题干与课件 PPT 图像，组装多模态 Prompt 路由至 Qwen2.5-VL / Gemma-4 / DeepSeek，提取纯真 JSON 答案自动提交。
-* **分布式热切配置**：支持通过 GitCode / 自建 Raw 镜像动态更新服务器 IP，客户端 0 重新打包、0 中断无感热切换。
+### 🤖 3. 雨课堂签到与多模态 AI 答题系统 (`雨课堂签到/`)
+- **WebSocket 实时课堂信令监听**：全双工连接课堂 `wsapp` 频道，自动捕获开课、签到、课堂互动推题。
+- **多模态大模型视觉解题路由**：
+  - 自动渲染课件 PPT 截图并提取题干，组装多模态 Vision Prompt。
+  - 支持 SiliconFlow（Qwen2.5-VL）、NVIDIA（Gemma-4/Nemotron）、DeepSeek、OpenAI、Gemini 等主流大模型。
+  - 内置 **Thinking 深度思考竞速 -> 25s 熔断回退 Fast 通道** 的双模型容灾机制。
+- **分布式配置热切换**：支持通过 GitCode / 自建 Raw 镜像动态更新服务器 IP，客户端无需重新打包即可无感切换。
 
 ---
 
-## 🚀 本地快速上手与开发调试
+## 3. 快速开始（手把手保姆级运行教程）
 
-### 1. 运行学习通 Python 客户端或 Uni-App 前端
+### 3.1 超星学习通快速上手（纯本地版）
+
+#### 方式一：运行 Python 交互式登录提取工具
+无需安装任何第三方库（仅使用 Python 原生内置模块）：
+
 ```bash
-# 运行学习通交互式登录提取工具
+# 1. 进入学习通目录
 cd 学习通签到
-python xxt_login.py
 
-# 启动 Uni-App 前端：
-# 使用 HBuilderX 打开「学习通签到」目录 -> 点击「运行」->「运行到内置浏览器」或「运行到 Android App 基座」
+# 2. 启动交互式客户端
+python xxt_login.py
 ```
 
-### 2. 启动微助教后端开发环境
+**运行交互流程：**
+```
+=====================================================
+          超星学习通 移动端登录交互终端
+=====================================================
+  [1] 手机号 + 短信验证码登录
+  [2] 手机号 / 账号 + 密码登录
+  [0] 退出
+=====================================================
+请选择登录模式 [1/2/0]: 1
+请输入手机号: 13800138000
+[*] 正在向手机号 13800138000 发送验证码...
+[+] 短信验证码发送成功！请注意查收手机短信。
+请输入收到的 4-6 位短信验证码: 123456
+[*] 正在提交登录验证 (短信验证码)...
+[+] Passport 账号验证成功！
+[+] 提取核心 UID: 100000001
+[*] 正在同步用户信息与机构绑定...
+=============================================
+            【登录成功 - 用户信息】
+  用户姓名: 张三
+  所属学校: 天津商业大学
+  学号/工号: 20260001
+  用户 UID: 100000002 (puid: 100000001)
+  绑定手机: 13800138000
+=============================================
+[+] 登录凭证已成功保存至: chaoxing_cookies.json
+```
+
+#### 方式二：使用 HBuilderX 运行 Uni-App 移动端 App
+1. 下载并安装 [HBuilderX](https://www.dcloud.io/hbuilderx.html)（官方正式版）。
+2. 在 HBuilderX 顶部菜单选择：`文件` -> `打开目录` -> 选择 `学习通签到` 文件夹。
+3. 运行项目：
+   - **浏览器运行**：点击顶部菜单 `运行` -> `运行到浏览器` -> `Chrome`。
+   - **手机/真机运行**：使用 USB 数据线连接 Android 手机（开启 USB 调试模式），点击 `运行` -> `运行到 Android App 基座`。
+4. **App 界面操作**：
+   - 点击 **“添加新账号凭证”**，输入备注名、手机号即可直接验证码或密码登录。
+   - 教师出示签到二维码后，点击右上角 **“批量扫码签到”**，16 并发极速打卡。
+
+---
+
+### 3.2 微助教系统快速上手（全栈版）
+
+微助教系统包含 **Go 微信底层引擎**、**Python FastAPI 调度后端** 和 **Uni-App 客户端**。
+
+#### 第一步：启动 yyb-go 微信底协议引擎
+```bash
+cd 微助教签到/yyb_go
+
+# Windows 直接运行预编译程序：
+.\yyb-go.exe -port 8999
+
+# Linux / macOS 运行：
+chmod +x ./yyb-go
+./yyb-go -port 8999
+```
+* 服务启动后监听在 `http://127.0.0.1:8999`。
+
+#### 第二步：配置并启动 Python FastAPI 后端服务
+打开新的终端窗口：
+
 ```bash
 cd 微助教签到/server
 
-# 1. 创建独立虚拟环境并激活
-python3 -m venv venv
-source venv/bin/activate  # Windows: .\venv\Scripts\activate
+# 1. 创建 Python 独立虚拟环境并激活
+python -m venv venv
+# Windows 激活命令：
+.\venv\Scripts\activate
+# Linux/macOS 激活命令：
+source venv/bin/activate
 
-# 2. 安装依赖包
+# 2. 安装项目依赖
 pip install -r requirements.txt
 
-# 3. 复制并编辑环境变量
-cp .env.example .env
+# 3. 复制环境变量配置文件
+copy .env.example .env   # Linux: cp .env.example .env
 
-# 4. 启动后端 API 服务
+# 4. 启动 FastAPI 后端服务
 uvicorn main:app --host 0.0.0.0 --port 17521 --reload
 ```
 
-### 3. 启动雨课堂后端与 AI 解题服务
+#### 第三步：访问 Web 管理控制台添加账号
+1. 打开浏览器访问安全入口：`http://127.0.0.1:17521/070419`
+2. 点击 **“添加微信账号”**，使用微信扫描网页生成的二维码。
+3. 扫码确认后，系统自动提取 Token、初始化三层保活引擎，并将账号存入 SQLite 数据库。
+
+#### 第四步：运行微助教 Uni-App 移动客户端
+1. 在 HBuilderX 中打开 `微助教签到/app` 目录。
+2. 在 `app/pages/login/index.vue` 或 App 设置页面中，填入您的后端服务器地址（本地调试填 `http://127.0.0.1:17521`）与 API Key。
+3. 点击 `运行` -> `运行到内置浏览器` 或 `运行到 Android App 基座` 即可体验全套极速打卡与答题功能。
+
+---
+
+### 3.3 雨课堂系统快速上手（AI 视觉答题版）
+
+#### 第一步：配置并启动雨课堂后端与 AI 解题服务
 ```bash
 cd 雨课堂签到
 
-# 1. 创建虚拟环境并安装依赖
-python3 -m venv venv
-source venv/bin/activate  # Windows: .\venv\Scripts\activate
+# 1. 创建并激活虚拟环境
+python -m venv venv
+.\venv\Scripts\activate  # Linux: source venv/bin/activate
+
+# 2. 安装所需依赖
 pip install -r requirements.txt
 
-# 2. 复制环境配置文件
-cp .env.example .env
+# 3. 配置 .env 文件
+copy .env.example .env   # Linux: cp .env.example .env
+```
 
-# 3. 启动 API 服务与 WebSocket 监控
+编辑 `.env` 文件，填入您的大模型 API 密钥（以 SiliconFlow 为例）：
+```ini
+PORT=5000
+AI_PROVIDER=siliconflow
+AI_API_KEY=sk-your-siliconflow-api-key-here
+AI_BASE_URL=https://api.siliconflow.cn/v1
+AI_MODELS=Qwen/Qwen2.5-VL-72B-Instruct
+SILICONFLOW_IMAGE_DETAIL=low
+```
+
+启动主服务：
+```bash
 python api_server.py
+```
+* 后台将在 `http://0.0.0.0:5000` 启动，自动加载 AI 视觉解题路由与 WebSocket 监控引擎。
+
+#### 第二步：运行雨课堂 Uni-App 客户端
+1. 在 HBuilderX 中打开 `雨课堂签到` 目录。
+2. 确认 `server_config.json` 中的 `server_url` 指向 `http://127.0.0.1:5000`。
+3. 点击 `运行` -> `运行到内置浏览器` 或 `运行到 Android 基座`。
+4. 在 App 账号列表导入雨课堂 Cookie（格式：`sessionid=xxx; sid=yyy;`），开启课堂自动化监控。
+
+---
+
+## 4. 服务器永久生产部署指南（Linux 常驻）
+
+> 📖 **更详细的逐步运维指令与排错方案请参阅 [docs/server_deploy.md](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/docs/server_deploy.md)**
+
+### 4.1 Docker Compose 一键容器化部署
+
+在 Linux 服务器（Ubuntu 20.04/22.04/24.04）上推荐使用 Docker Compose 统一编排：
+
+```bash
+# 1. 安装 Docker 与 Docker Compose
+sudo apt update && sudo apt install -y docker-ce docker-compose-plugin
+
+# 2. 在项目根目录启动全套服务
+docker compose up -d
+
+# 3. 查看容器健康状态
+docker compose ps
+```
+
+### 4.2 Systemd 裸机守护常驻部署
+
+使用 Linux 原生 Systemd 管理进程，确保开机自启、崩溃自动秒级拉起：
+
+```bash
+# 1. 创建微助教 Systemd 服务 (/etc/systemd/system/wzj-api.service)
+sudo nano /etc/systemd/system/wzj-api.service
+```
+```ini
+[Unit]
+Description=TeacherMate Protocol Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/ubuntu/projects/微助教签到/server
+EnvironmentFile=/home/ubuntu/projects/微助教签到/server/.env
+ExecStart=/home/ubuntu/projects/微助教签到/server/venv/bin/uvicorn main:app --host 0.0.0.0 --port 17521 --workers 2
+Restart=always
+RestartSec=5s
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+```
+
+激活并启动服务：
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now wzj-api
+sudo systemctl status wzj-api --no-pager
+```
+
+### 4.3 Nginx 反向代理与 SSL 证书配置
+
+配置 Nginx 支持 50MB 图片上传、WebSocket 协议升级与 HTTPS 加密：
+
+```nginx
+server {
+    listen 80;
+    server_name api.yourdomain.com; # 替换为您的域名
+
+    client_max_body_size 50M;
+
+    location / {
+        proxy_pass http://127.0.0.1:17521;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # WebSocket 协议升级支持
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+申请免费 Let's Encrypt 证书：
+```bash
+sudo certbot --nginx -d api.yourdomain.com --non-interactive --agree-tos -m your-email@example.com --redirect
 ```
 
 ---
 
-## 🖥️ 服务器永久完整部署方案
+## 5. 配置文件与环境变量全量说明字典
 
-> 📖 **完整生产部署指南请参阅 [docs/server_deploy.md](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/docs/server_deploy.md)**
+### 微助教后端环境变量 (`微助教签到/server/.env`)
+| 变量名 | 默认值 | 必填 | 作用与示例 |
+| :--- | :--- | :---: | :--- |
+| `PORT` | `17521` | 否 | FastAPI 后端服务监听端口 |
+| `API_KEY` | `your-secure-api-key-here` | 是 | 接口访问鉴权密码（客户端请求需携带此 `X-API-Key`） |
+| `YYB_GO_URL`| `http://127.0.0.1:8999` | 是 | yyb-go 微信底协议引擎通信地址 |
+| `DB_PATH` | `server/data.db` | 否 | SQLite 数据库存储绝对路径 |
 
-### 一分钟 Docker Compose 极速部署
-
-1. **安装 Docker 与 Compose 插件**：
-   ```bash
-   sudo apt update && sudo apt install -y docker-ce docker-compose-plugin
-   ```
-2. **在项目根目录启动编排服务**：
-   ```bash
-   docker compose up -d
-   ```
-3. **验证服务健康状态**：
-   ```bash
-   curl -s http://127.0.0.1:17521/health
-   curl -s http://127.0.0.1:5000/api/status
-   ```
-
-### 生产环境端口与安全规则速查：
-* `17521`：微助教后端 API 与 Web 管理控制台 (`/070419`)
-* `5000`：雨课堂后台 API 与 AI 答题同步接口
-* `8999`：微信 MMTLS 底层引擎（**严格限制内网 `127.0.0.1` 访问**）
-* `80 / 443`：Nginx HTTP / HTTPS 反向代理端口
+### 雨课堂后端环境变量 (`雨课堂签到/.env`)
+| 变量名 | 默认值 | 必填 | 作用与示例 |
+| :--- | :--- | :---: | :--- |
+| `PORT` | `5000` | 否 | Flask 后端服务监听端口 |
+| `AI_PROVIDER` | `siliconflow` | 是 | 大模型平台选型 (`siliconflow` / `nvidia` / `deepseek` / `gemini` / `openai`) |
+| `AI_API_KEY` | `sk-xxxxxx` | 是 | 大模型平台提供的 API Key |
+| `AI_MODELS` | `Qwen/Qwen2.5-VL-72B-Instruct` | 是 | 视觉大模型名称 |
+| `SILICONFLOW_IMAGE_DETAIL`| `low` | 否 | 图像解析模式：`low` (极速 1s 响应) / `high` (高清模式) |
+| `YKT_ADMIN_KEY` | `your_admin_key` | 否 | 管理员控制台口令 |
 
 ---
 
-## ⚙️ 配置文件与环境变量说明
-
-### 1. 微助教后端配置 (`微助教签到/server/.env`)
-| 变量名 | 默认值 | 作用说明 |
-| :--- | :--- | :--- |
-| `PORT` | `17521` | FastAPI 服务监听端口 |
-| `API_KEY` | `your-secure-api-key-here` | 接口访问密钥（需与 App 端设置一致） |
-| `YYB_GO_URL` | `http://127.0.0.1:8999` | yyb-go 微信底协议引擎通信地址 |
-| `DB_PATH` | `server/data.db` | SQLite 数据库存储绝对路径 |
-
-### 2. 雨课堂后端配置 (`雨课堂签到/.env`)
-| 变量名 | 默认值 | 作用说明 |
-| :--- | :--- | :--- |
-| `PORT` | `5000` | Flask / Waitress 服务监听端口 |
-| `AI_PROVIDER` | `siliconflow` | 大模型供应商 (`siliconflow` / `nvidia` / `gemini` / `openai`) |
-| `AI_API_KEY` | `sk-xxxxxx` | 大模型平台申请的 API 密钥 |
-| `AI_MODELS` | `Qwen/Qwen2.5-VL-72B-Instruct` | 指定多模态视觉大模型名称 |
-| `SILICONFLOW_IMAGE_DETAIL`| `low` | 图片解析模式 (`low` 极速, `high` 高清) |
-
----
-
-## 📂 推荐仓库目录结构
+## 6. 推荐仓库目录结构
 
 ```
 protocol-app-suite/
 ├── .gitignore                         # 完整多技术栈 Git 忽略规则
-├── LICENSE                            # 开源许可证 (MIT License)
-├── README.md                          # 项目核心主文档
+├── LICENSE                            # MIT 开源许可证
+├── README.md                          # 🌟 项目全景主文档
+├── docker-compose.yml                 # 生产级 Docker 编排配置
 │
-├── docs/                              # 生产级文档中心
+├── docs/                              # 📚 深度文档中心
 │   ├── server_deploy.md               # Linux 服务器永久生产部署实战手册
-│   ├── protocol_flow.md               # 网络协议深度交互时序与报文接口规范
+│   ├── protocol_flow.md               # 网络协议深度交互时序与报文规范
 │   └── faq.md                         # 常见踩坑与故障排查 FAQ
 │
-├── 学习通签到/                         # 超星学习通纯本地多账号助手
-│   ├── pages/index/index.vue          # 前端主页面 (Apple 赤红质感 UI / 16 并发扫码)
-│   ├── xxt_login.py                   # Python 协议登录与 Cookie 提取脚本
+├── 学习通签到/                         # 📱 超星学习通多账号助手 (纯本地独立运行)
+│   ├── pages/index/index.vue          # 前端主页面 (Apple 质感 UI / 16 并发批量扫码 / 精准打捞)
+│   ├── xxt_login.py                   # Python 协议登录、MD5 加盐签名与 Cookie 提取工具
 │   ├── chaoxing_cookies.example.json  # 凭证存储结构模板
-│   ├── manifest.json                  # App 打包与摄像头权限配置
+│   ├── manifest.json                  # App 打包与权限配置
 │   ├── pages.json                     # 页面路由定义
+│   ├── App.vue                        # 应用生命周期
 │   └── main.js                        # Uni-App 入口
 │
-├── 微助教签到/                         # 微助教签到与全题型答题自动化系统
+├── 微助教签到/                         # ⚡ 微助教自动化系统 (0.2s 直捕 / 三层保活 / 全题型答题)
 │   ├── app/                           # Uni-App 移动客户端源码
 │   │   ├── api/request.js             # 多源竞速动态配置拉取与 API 拦截器
-│   │   ├── pages/                     # 首页、扫码、题目详情、设置页面
+│   │   ├── pages/                     # 首页、扫码、答题详情、设置页面
 │   │   └── store/index.js             # Vuex 状态管理与自动巡检
 │   ├── server/                        # FastAPI 调度后端
 │   │   ├── main.py                    # 入口服务、Web 控制台路由 (/070419)
 │   │   ├── config.py                  # 环境变量与配置管理
 │   │   ├── auth.py                    # X-API-Key 鉴权中间件
-│   │   ├── .env.example               # 环境变量配置模板
-│   │   ├── models/database.py         # SQLite 异步数据持久化
+│   │   ├── .env.example               # 生产环境配置模板
+│   │   ├── models/database.py         # SQLite 异步数据持久化与自动建表
 │   │   ├── routers/                   # 业务路由 (accounts / signin / quiz / upload)
 │   │   ├── services/                  # 核心服务 (teachermate / keepalive / yyb_service)
 │   │   └── static/index.html          # Web 管理控制台 SPA 页面
 │   └── yyb_go/                        # 微信 MMTLS 协议底层引擎模块
 │
-└── 雨课堂签到/                         # 雨课堂分布式签到与多模态 AI 答题系统
-    ├── pages/                         # Uni-App 移动客户端页面
+└── 雨课堂签到/                         # 🤖 雨课堂分布式系统 (WS 课堂监听 / 多模态 AI 解题)
+    ├── pages/                         # Uni-App 移动客户端源码
     ├── api_server.py                  # 后台 API 服务与多租户同步网关
     ├── ai_solver.py                   # 多模态 AI 大模型视觉题目解析引擎
     ├── ykt_ws_engine.py               # WebSocket 实时课堂信令监听器
@@ -241,17 +432,29 @@ protocol-app-suite/
     ├── safe_json_store.py             # 线程安全 JSON 存储引擎
     ├── server_config.example.json     # 分布式服务器动态配置示例
     ├── accounts.example.json          # 多账号凭证结构示例
-    ├── .env.example                   # 雨课堂环境变量配置模板
+    ├── .env.example                   # 环境变量配置模板
     └── deploy/                        # PM2 / Systemd 一键部署脚本包
 ```
 
 ---
 
-## ⚖️ 开源协议建议与法律免责说明
+## 7. 常见踩坑与故障排查 FAQ
 
-### 协议选择建议：**MIT License**
-* **理由**：本项目代码结构清晰模块化，采用 **MIT 协议** 能够最大程度促进技术交流与学术研究，允许开发者自由引用与二开。
-* **注意事项**：
-  1. 必须在所有二次分发版本中保留原作者版权声明与免责声明。
-  2. **严禁用于任何商业牟利、批量作弊或违反国家法律法规的非法用途**。
-  3. 项目不对任何因使用本协议代码导致的官方封号、网络限制或法律后果承担任何连带责任。
+> 💡 **完整 20+ 场景排障请参阅 [docs/faq.md](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/docs/faq.md)**
+
+| 现象 / 报错 | 常见根因 | 极速解决方法 |
+| :--- | :--- | :--- |
+| **微助教 403 Forbidden** | 客户端 `X-API-Key` 与后端 `.env` 不一致 | 检查后端 `.env` 中的 `API_KEY`，在 App 设置页重新填入完全相同的密钥。 |
+| **学习通短信签名失败** | 时间戳使用了秒级（10位） | 必须使用 13 位毫秒时间戳计算 `md5(phone + Salt + timestamp)`。 |
+| **微助教提示账号过期** | 微信底层凭证过期或保活未运行 | 访问 `http://<IP>:17521/070419` 重新扫码登录，确认后台三层保活引擎正在运行。 |
+| **端口已被占用** | 旧进程未杀干净 | 执行 `sudo lsof -i :17521` 找到 PID，执行 `kill -9 <PID>` 强制释放端口。 |
+| **AI 答题超时 (45s)** | 国外模型网络波动或 API 余额不足 | 切换为国内 SiliconFlow 平台的 `Qwen/Qwen2.5-VL-72B-Instruct` 极速模型。 |
+
+---
+
+## 8. 开源许可证与安全合规
+
+本项目采用 **[MIT License](file:///d:/app/%E9%80%86%E5%90%91%E5%85%A5%E9%97%A8%E6%95%99%E5%AD%A6/LICENSE)** 开源许可证。
+
+- **允许**：自由修改、技术研究、分发、个人学习与二次开发。
+- **限制**：二次分发必须保留原作者版权信息与本项目的免责声明；严禁用于任何破坏计算机信息系统与扰乱高校教学管理的行为。
