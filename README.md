@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ Protocol App Reverse Suite (高校教学协议逆向与自动化工程全套开源套件)
+# ⚡ (学习通签到，雨课堂签到，微助教签到)
 
 ### 基于 Uni-App 跨平台前端 + Python/Golang 高并发后端的教学协议逆向、主动保活与多模态 AI 视觉答题系统
 
@@ -11,13 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Linux%20%7C%20H5-lightgrey.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python)](https://www.python.org/)
 
-<p align="center">
-  <a href="#-android-安装包-apk-直接下载">📱 <b>下载 Android APK 安装包</b></a> •
-  <a href="#-ai-多模态大模型配置与-api-密钥获取教程">🧠 <b>AI 密钥申请与配置</b></a> •
-  <a href="#3-快速开始手把手保姆级运行教程">🚀 <b>快速开始</b></a> •
-  <a href="#4-服务器永久生产部署指南linux-常驻">🖥️ <b>服务器永久部署</b></a> •
-  <a href="#-常见踩坑与故障排查-faq">💡 <b>常见 FAQ</b></a>
-</p>
+
 
 </div>
 
@@ -29,18 +23,8 @@
 
 ---
 
-## 📱 Android 安装包 (APK) 直接下载
 
-如果您不想从源码编译打包，可以直接点击下方表格中的链接**高速直链下载**已编译好的 Release 安装包：
 
-| 应用名称 | 直接下载链接 | 安装包大小 | 核心功能亮点 | 适用系统 |
-| :--- | :--- | :---: | :--- | :--- |
-| **超星学习通多账号助手** | [🚀 **立即下载 (学习通签到.apk)**](https://github.com/cwywjg/Aggregate_check_in/raw/main/release/%E5%AD%A6%E4%B9%A0%E9%80%9A%E7%AD%BE%E5%88%B0.apk) | 14.98 MB | 纯本地独立运行、手机短信/密码登录、16 线程并发批量扫码、40+ 硬件指纹伪装 | Android 7.0+ |
-| **雨课堂分布式答题助手** | [🚀 **立即下载 (雨课堂签到.apk)**](https://github.com/cwywjg/Aggregate_check_in/raw/main/release/%E9%9B%A8%E8%AF%BE%E5%A0%82%E7%AD%BE%E5%88%B0.apk) | 18.17 MB | WebSocket 课堂实时信令监听、多模态 AI 视觉解题、多账号批量提交、远程配置热更 | Android 7.0+ |
-
-> 💡 **安装提示**：
-> 1. 点击上方蓝字链接后，浏览器将**自动直接开始下载 APK 安装包**（无需在 GitHub 网页中二次点击）。
-> 2. 下载后在 Android 手机上安装，安装时允许“未知来源应用安装”即可正常使用。
 
 ---
 
